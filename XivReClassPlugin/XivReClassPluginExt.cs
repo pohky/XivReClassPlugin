@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ReClassNET;
 using ReClassNET.Forms;
+using ReClassNET.Memory;
 using ReClassNET.Nodes;
 using ReClassNET.Plugins;
 using ReClassNET.UI;
@@ -12,23 +13,24 @@ using XivReClassPlugin.Forms;
 
 namespace XivReClassPlugin {
     public sealed class XivReClassPluginExt : Plugin {
-        private IPluginHost? m_Host;
-
         public static string PluginName => "XivReClass";
-        public static XivPluginSettings? Settings;
+        public static XivPluginSettings Settings { get; private set; } = null!;
 
         public override bool Initialize(IPluginHost host) {
-            m_Host = host;
             Settings = XivPluginSettings.Load();
-            GlobalWindowManager.WindowAdded += OnWindowAdded;
             XivDataManager.Update();
+            GlobalWindowManager.WindowAdded += OnWindowAdded;
+            Program.RemoteProcess.ProcessAttached += OnProcessAttached;
             return true;
         }
 
+        private void OnProcessAttached(RemoteProcess sender) {
+            XivDataManager.Update();
+        }
+
         public override void Terminate() {
-            Settings?.Save();
+            Settings.Save();
             GlobalWindowManager.WindowAdded -= OnWindowAdded;
-            m_Host = null;
         }
 
         public override IReadOnlyList<INodeInfoReader> GetNodeInfoReaders() {

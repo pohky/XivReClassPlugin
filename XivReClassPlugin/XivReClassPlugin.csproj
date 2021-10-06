@@ -2,49 +2,45 @@
  <PropertyGroup>
   <TargetFramework>net472</TargetFramework>
   <LangVersion>9.0</LangVersion>
+  <UseWindowsForms>true</UseWindowsForms>
   <Nullable>enable</Nullable>
   <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  <DebugType>Full</DebugType>
   <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
   <CopyLocalLockfileAssemblies>true</CopyLocalLockfileAssemblies>
   <Platforms>x64;x86</Platforms>
-  <OutputType>Library</OutputType>
-  <UseWindowsForms>true</UseWindowsForms>
-  <Authors>Pohky</Authors>
+
   <Product>ReClass.NET Plugin</Product>
+  <Authors>Pohky</Authors>
   <Description>FFXIVClientStructs Plugin</Description>
-  <Version>1.0.0.0</Version>
-  <GitHub>$(USERPROFILE)\Documents\GitHub\</GitHub>
-  <ReClass>C:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClass>
-  <DevOut>C:\Tools\ReClass\$(Platform)\Plugins\</DevOut>
+
+  <ReClassExe>C:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
+  <PluginOutDir>C:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
  </PropertyGroup>
 
  <ItemGroup>
   <PackageReference Include="YamlDotNet" Version="11.2.1" />
-  <Reference Include="ReClass.NET" HintPath="$(ReClass)" Private="false" />
-  <!--<ProjectReference Include="$(GitHub)ReClass.NET\ReClass.NET\ReClass.NET.csproj" Private="false" />-->
+  <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
  </ItemGroup>
 
+
  <ItemGroup>
-   <Folder Include="Data\" />
+  <PluginFiles Include="$(OutDir)$(AssemblyName).dll" />
+  <PluginFiles Include="$(OutDir)YamlDotNet.dll" />
  </ItemGroup>
 
  <Target Name="CopyDev" AfterTargets="Build">
-  <ItemGroup>
-   <CopyFiles Include="$(OutputPath)$(AssemblyName).dll" />
-   <CopyFiles Include="$(OutputPath)YamlDotNet.dll" />
-  </ItemGroup>
-  <Message Text="Copying: @(CopyFiles) to $(DevOut)" Importance="High" />
-  <Copy SourceFiles="@(CopyFiles)" DestinationFolder="$(DevOut)" />
+  <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginOutDir)">
+   <Output TaskParameter="CopiedFiles" ItemName="CopiedList" />
+   <Output TaskParameter="DestinationFiles" ItemName="DestinationList" />
+  </Copy>
+  <Message Text="Copied: %(DestinationList.FullPath)" Importance="High" />
  </Target>
 
  <Target Name="CleanDev" AfterTargets="Clean">
-  <ItemGroup>
-   <CleanFiles Include="$(DevOut)$(AssemblyName).dll" />
-   <CleanFiles Include="$(DevOut)YamlDotNet.dll" />
-  </ItemGroup>
-  <Message Text="Deleting: @(CleanFiles)" Importance="High" />
-  <Delete Files="@(CleanFiles)" />
+  <Delete Files="@(PluginFiles->'$(PluginOutDir)%(Filename)%(Extension)')">
+   <Output TaskParameter="DeletedFiles" ItemName="DeletedList" />
+  </Delete>
+  <Message Text="Deleted: '%(DeletedList.FullPath)'" Importance="High" />
  </Target>
 </Project>
