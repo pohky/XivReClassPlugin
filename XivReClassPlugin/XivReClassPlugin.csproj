@@ -13,6 +13,7 @@
   <Product>ReClass.NET Plugin</Product>
   <Authors>Pohky</Authors>
   <Description>FFXIVClientStructs Plugin</Description>
+  <Version>1.0.0.2</Version>
 
   <ReClassExe>C:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
   <PluginOutDir>C:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>

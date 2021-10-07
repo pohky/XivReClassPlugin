@@ -31,6 +31,8 @@ namespace XivReClassPlugin {
         }
 
         private static string? GetNameForAddress(nint address, bool includeNamespace) {
+            if (XivReClassPluginExt.InternalNamedAddresses.TryGetValue(address, out var name))
+                return includeNamespace ? name : Utils.RemoveNamespace(name);
             var offset = Utils.GetModuleOffset(address);
             if (offset == 0) return null;
 
