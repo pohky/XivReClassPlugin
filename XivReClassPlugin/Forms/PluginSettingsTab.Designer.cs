@@ -35,7 +35,8 @@ namespace XivReClassPlugin.Forms
             this.OpenDataButton = new System.Windows.Forms.Button();
             this.CheckBoxShowOffset = new System.Windows.Forms.CheckBox();
             this.CheckBoxNamespace = new System.Windows.Forms.CheckBox();
-            this.CheckBoxInheritance = new System.Windows.Forms.CheckBox();
+            this.CheckBoxNamespacePointer = new System.Windows.Forms.CheckBox();
+            this.CheckBoxUseNamed = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -53,7 +54,8 @@ namespace XivReClassPlugin.Forms
             this.flowLayoutPanel1.Controls.Add(this.OpenDataButton);
             this.flowLayoutPanel1.Controls.Add(this.CheckBoxShowOffset);
             this.flowLayoutPanel1.Controls.Add(this.CheckBoxNamespace);
-            this.flowLayoutPanel1.Controls.Add(this.CheckBoxInheritance);
+            this.flowLayoutPanel1.Controls.Add(this.CheckBoxNamespacePointer);
+            this.flowLayoutPanel1.Controls.Add(this.CheckBoxUseNamed);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -96,22 +98,33 @@ namespace XivReClassPlugin.Forms
             this.CheckBoxNamespace.AutoSize = true;
             this.CheckBoxNamespace.Location = new System.Drawing.Point(195, 29);
             this.CheckBoxNamespace.Name = "CheckBoxNamespace";
-            this.CheckBoxNamespace.Size = new System.Drawing.Size(200, 17);
+            this.CheckBoxNamespace.Size = new System.Drawing.Size(167, 17);
             this.CheckBoxNamespace.TabIndex = 3;
-            this.CheckBoxNamespace.Text = "Include Namespace on Class Names";
+            this.CheckBoxNamespace.Text = "Show Namespace on Classes";
             this.CheckBoxNamespace.UseVisualStyleBackColor = true;
             this.CheckBoxNamespace.CheckedChanged += new System.EventHandler(this.CheckBoxNamespace_CheckedChanged);
             // 
-            // CheckBoxInheritance
+            // CheckBoxNamespacePointer
             // 
-            this.CheckBoxInheritance.AutoSize = true;
-            this.CheckBoxInheritance.Location = new System.Drawing.Point(3, 52);
-            this.CheckBoxInheritance.Name = "CheckBoxInheritance";
-            this.CheckBoxInheritance.Size = new System.Drawing.Size(186, 17);
-            this.CheckBoxInheritance.TabIndex = 4;
-            this.CheckBoxInheritance.Text = "Show Full Inheritance (on vtables)";
-            this.CheckBoxInheritance.UseVisualStyleBackColor = true;
-            this.CheckBoxInheritance.CheckedChanged += new System.EventHandler(this.CheckBoxInheritance_CheckedChanged);
+            this.CheckBoxNamespacePointer.AutoSize = true;
+            this.CheckBoxNamespacePointer.Location = new System.Drawing.Point(3, 52);
+            this.CheckBoxNamespacePointer.Name = "CheckBoxNamespacePointer";
+            this.CheckBoxNamespacePointer.Size = new System.Drawing.Size(177, 17);
+            this.CheckBoxNamespacePointer.TabIndex = 4;
+            this.CheckBoxNamespacePointer.Text = "Include Namespace on Pointers";
+            this.CheckBoxNamespacePointer.UseVisualStyleBackColor = true;
+            this.CheckBoxNamespacePointer.CheckedChanged += new System.EventHandler(this.CheckBoxNamespacePointer_CheckedChanged);
+            // 
+            // CheckBoxUseNamed
+            // 
+            this.CheckBoxUseNamed.AutoSize = true;
+            this.CheckBoxUseNamed.Location = new System.Drawing.Point(186, 52);
+            this.CheckBoxUseNamed.Name = "CheckBoxUseNamed";
+            this.CheckBoxUseNamed.Size = new System.Drawing.Size(176, 17);
+            this.CheckBoxUseNamed.TabIndex = 5;
+            this.CheckBoxUseNamed.Text = "Use ReClass Named Addresses";
+            this.CheckBoxUseNamed.UseVisualStyleBackColor = true;
+            this.CheckBoxUseNamed.CheckedChanged += new System.EventHandler(this.CheckBoxUseNamed_CheckedChanged);
             // 
             // PluginSettingsTab
             // 
@@ -134,6 +147,7 @@ namespace XivReClassPlugin.Forms
         private System.Windows.Forms.Button OpenDataButton;
         private System.Windows.Forms.CheckBox CheckBoxShowOffset;
         private System.Windows.Forms.CheckBox CheckBoxNamespace;
-        private System.Windows.Forms.CheckBox CheckBoxInheritance;
+        private System.Windows.Forms.CheckBox CheckBoxNamespacePointer;
+        private System.Windows.Forms.CheckBox CheckBoxUseNamed;
     }
 }

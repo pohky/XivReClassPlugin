@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReClassNET;
 using ReClassNET.Forms;
@@ -18,19 +19,60 @@ namespace XivReClassPlugin {
 
         public override bool Initialize(IPluginHost host) {
             Settings = XivPluginSettings.Load();
-            XivDataManager.Update();
             GlobalWindowManager.WindowAdded += OnWindowAdded;
             Program.RemoteProcess.ProcessAttached += OnProcessAttached;
             return true;
         }
 
-        private void OnProcessAttached(RemoteProcess sender) {
+        private static void OnProcessAttached(RemoteProcess sender) {
+            if (!sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase)) {
+                XivDataManager.Clear();
+                sender.NamedAddresses.Clear();
+            } else Update();
+        }
+
+        public static void Update() {
             XivDataManager.Update();
+            if (Settings.UseNamedAddresses)
+                Task.Run(UpdateNamedAddresses);
+            else Program.RemoteProcess.NamedAddresses.Clear();
+        }
+
+        public static async Task UpdateNamedAddresses() {
+            var process = Program.RemoteProcess;
+            if (!process.IsValid) return;
+            var mod = process.GetModuleByName(Program.RemoteProcess.UnderlayingProcess.Name);
+            while (mod == null) {
+                mod = process.GetModuleByName(Program.RemoteProcess.UnderlayingProcess.Name);
+                await Task.Delay(20);
+            }
+            
+            process.NamedAddresses.Clear();
+            foreach (var dataClass in XivDataManager.Data.classes) {
+                if (dataClass.Value == null || dataClass.Value.vtbl == 0)
+                    continue;
+                var name = Settings.ShowNamespaces ? dataClass.Key : Utils.RemoveNamespace(dataClass.Key);
+                process.NamedAddresses[ToModuleAddress(mod.Start, dataClass.Value.vtbl)] = name;
+            }
+
+            foreach (var dataGlobal in XivDataManager.Data.globals.Where(d => d.Key != 0)) {
+                process.NamedAddresses[ToModuleAddress(mod.Start, dataGlobal.Key)] = dataGlobal.Value;
+            }
+
+            foreach (var dataFunction in XivDataManager.Data.functions.Where(d => d.Key != 0 && !string.IsNullOrEmpty(d.Value))) {
+                process.NamedAddresses[ToModuleAddress(mod.Start, dataFunction.Key)] = dataFunction.Value;
+            }
+
+            static IntPtr ToModuleAddress(nint moduleAddress, long dataAddress) {
+                return new IntPtr(moduleAddress + (dataAddress - XivDataManager.DataBaseAddress));
+            }
         }
 
         public override void Terminate() {
             Settings.Save();
+            Program.RemoteProcess.NamedAddresses.Clear();
             GlobalWindowManager.WindowAdded -= OnWindowAdded;
+            Program.RemoteProcess.ProcessAttached -= OnProcessAttached;
         }
 
         public override IReadOnlyList<INodeInfoReader> GetNodeInfoReaders() {
