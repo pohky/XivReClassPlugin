@@ -20,26 +20,20 @@
  </PropertyGroup>
 
  <ItemGroup>
+  <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
   <PackageReference Include="YamlDotNet" Version="11.2.1" />
   <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
  </ItemGroup>
 
-
- <ItemGroup>
-  <PluginFiles Include="$(OutDir)$(AssemblyName).dll" />
-  <PluginFiles Include="$(OutDir)YamlDotNet.dll" />
- </ItemGroup>
-
- <Target Name="CopyDev" AfterTargets="Build">
-  <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginOutDir)">
-   <Output TaskParameter="CopiedFiles" ItemName="CopiedList" />
+ <Target Name="CopyDev" AfterTargets="ILRepack" Condition="$(Configuration.Contains('Release'))">
+  <Copy SourceFiles="$(OutputPath)$(TargetName)$(TargetExt)" DestinationFolder="$(PluginOutDir)">
    <Output TaskParameter="DestinationFiles" ItemName="DestinationList" />
   </Copy>
   <Message Text="Copied: %(DestinationList.FullPath)" Importance="High" />
  </Target>
 
- <Target Name="CleanDev" AfterTargets="Clean">
-  <Delete Files="@(PluginFiles->'$(PluginOutDir)%(Filename)%(Extension)')">
+ <Target Name="CleanDev" AfterTargets="Clean" Condition="$(Configuration.Contains('Release'))">
+  <Delete Files="$(PluginOutDir)$(TargetName)$(TargetExt)">
    <Output TaskParameter="DeletedFiles" ItemName="DeletedList" />
   </Delete>
   <Message Text="Deleted: '%(DeletedList.FullPath)'" Importance="High" />
