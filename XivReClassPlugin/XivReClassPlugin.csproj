@@ -15,8 +15,8 @@
   <Description>FFXIVClientStructs Plugin</Description>
   <Version>1.0.0.3</Version>
 
-  <ReClassExe>C:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
-  <PluginOutDir>C:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
+  <ReClassExe>A:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
+  <PluginOutDir>A:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
  </PropertyGroup>
 
  <ItemGroup>
