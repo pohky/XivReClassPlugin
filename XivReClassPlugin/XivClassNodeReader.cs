@@ -31,16 +31,16 @@ namespace XivReClassPlugin {
         }
 
         private static string? GetNameForAddress(nint address, bool includeNamespace) {
-            if (XivReClassPluginExt.InternalNamedAddresses.TryGetValue(address, out var name))
-                return includeNamespace ? name : Utils.RemoveNamespace(name);
             var offset = Utils.GetModuleOffset(address);
             if (offset == 0) return null;
 
-            if (XivDataManager.TryGetClassName(offset, out var className))
-                return includeNamespace ? className : Utils.RemoveNamespace(className);
+            if (DataManager.TryGetClass((ulong)offset, out var classDef) && classDef != null) {
+                var name = XivReClassPluginExt.Settings.ShowInheritance ? classDef.ToString() : classDef.Name;
+                return includeNamespace ? name : Utils.RemoveNamespace(name);
+            }
 
-            if (XivDataManager.TryGetFunctionName(offset, out var funcName))
-                return funcName;
+            if (DataManager.TryGetFunction((ulong)offset, out var func) && func != null)
+                return includeNamespace ? func : Utils.RemoveNamespace(func);
 
             return null;
         }

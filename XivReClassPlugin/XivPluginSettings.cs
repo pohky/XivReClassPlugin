@@ -14,6 +14,7 @@ namespace XivReClassPlugin {
         public bool ShowNamespaces = true;
         public bool ShowNamespacesOnPointer = false;
         public bool UseNamedAddresses = true;
+        public bool ShowInheritance = true;
 
         public static XivPluginSettings Load() {
             if (!File.Exists(SettingsPath))

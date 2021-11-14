@@ -1,10 +1,12 @@
-﻿using ReClassNET;
+﻿using System.Text.RegularExpressions;
+using ReClassNET;
 
 namespace XivReClassPlugin {
     public static class Utils {
+        private static readonly Regex m_NamespaceRegex = new("\\w+::", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public static string RemoveNamespace(string str) {
-            var idx = str.LastIndexOf(':');
-            return idx > 0 && idx < str.Length ? str.Substring(idx + 1) : str;
+            return m_NamespaceRegex.Replace(str, "");
         }
 
         public static string? GetModuleRelativeName(nint address) {

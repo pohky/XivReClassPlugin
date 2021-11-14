@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReClassNET;
-using ReClassNET.Extensions;
 using ReClassNET.Forms;
 using ReClassNET.Memory;
 using ReClassNET.Nodes;
@@ -28,14 +27,14 @@ namespace XivReClassPlugin {
 
         private static void OnProcessAttached(RemoteProcess sender) {
             if (!sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase)) {
-                XivDataManager.Clear();
+                DataManager.Clear();
                 InternalNamedAddresses.Clear();
                 sender.NamedAddresses.Clear();
             } else Update();
         }
 
         public static void Update() {
-            XivDataManager.Update();
+            DataManager.Update();
             Task.Run(UpdateNamedAddresses);
         }
 
@@ -49,53 +48,25 @@ namespace XivReClassPlugin {
             }
 
             InternalNamedAddresses.Clear();
-            foreach (var classList in XivDataManager.Data.classes.Select(GetClasses)) {
-                var vfdict = new Dictionary<int, string>();
-                foreach (var (className, dataClass) in classList.Reverse()) {
-                    if (dataClass.vtbl == 0)
-                        continue;
-                    var name = Settings.ShowNamespaces ? className : Utils.RemoveNamespace(className);
-                    var address = ToModuleAddress(mod.Start, dataClass.vtbl);
-                    InternalNamedAddresses[address] = name;
-                    foreach (var kv in vfdict)
-                        dataClass.vfuncs[kv.Key] = kv.Value;
-                    foreach (var vfunc in dataClass.vfuncs) {
-                        vfdict[vfunc.Key] = vfunc.Value;
-                        var vaddr = process.ReadRemoteIntPtr(address + vfunc.Key * 8);
-                        if (!InternalNamedAddresses.ContainsKey(vaddr))
-                            InternalNamedAddresses[vaddr] = $"{name}.{vfunc.Value}";
-                    }
-                }
-            }
-
-            foreach (var dataGlobal in XivDataManager.Data.globals.Where(d => d.Key != 0)) {
-                InternalNamedAddresses[ToModuleAddress(mod.Start, dataGlobal.Key)] = dataGlobal.Value;
-            }
-
-            foreach (var dataFunction in XivDataManager.Data.functions.Where(d => d.Key != 0 && !string.IsNullOrEmpty(d.Value))) {
-                InternalNamedAddresses[ToModuleAddress(mod.Start, dataFunction.Key)] = dataFunction.Value!;
-            }
-
             process.NamedAddresses.Clear();
-            if (Settings.UseNamedAddresses) {
-                foreach (var kv in InternalNamedAddresses) {
-                    process.NamedAddresses[kv.Key] = kv.Value;
-                }
+
+            if (!Settings.UseNamedAddresses)
+                return;
+
+            foreach (var def in DataManager.Classes) {
+                var name = Settings.ShowInheritance ? def.Value.ToString() : def.Value.Name;
+                name = Settings.ShowNamespaces ? name : Utils.RemoveNamespace(name);
+                var address = def.Key + (ulong)mod.Start;
+                InternalNamedAddresses[(nint)address] = name;
             }
 
-            static IntPtr ToModuleAddress(nint moduleAddress, long dataAddress) {
-                return new IntPtr(moduleAddress + (dataAddress - XivDataManager.DataBaseAddress));
+            foreach (var function in DataManager.Functions) {
+                var address = function.Key + (ulong)mod.Start;
+                InternalNamedAddresses[(nint)address] = function.Value;
             }
 
-            static IEnumerable<(string Name, XivClass DataClass)> GetClasses(KeyValuePair<string, XivClass?> kv) {
-                var className = kv.Key;
-                var xivClass = kv.Value;
-                while (xivClass != null && !string.IsNullOrEmpty(className)) {
-                    yield return (className, xivClass);
-                    className = xivClass.inherits_from ?? string.Empty;
-                    xivClass = string.IsNullOrEmpty(className) ? null : XivDataManager.Data.classes[className];
-                }
-            }
+            foreach (var kv in InternalNamedAddresses)
+                process.NamedAddresses[kv.Key] = kv.Value;
         }
 
         public override void Terminate() {

@@ -25,16 +25,14 @@
   <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
  </ItemGroup>
 
- <Target Name="CopyDev" AfterTargets="ILRepack"
-         Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
-  <Copy SourceFiles="$(OutputPath)$(TargetName)$(TargetExt)" DestinationFolder="$(PluginOutDir)">
+ <Target Name="CopyDev" AfterTargets="ILRepack" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
+ <Copy SourceFiles="$(OutputPath)$(TargetName)$(TargetExt)" DestinationFolder="$(PluginOutDir)">
    <Output TaskParameter="DestinationFiles" ItemName="DestinationList" />
   </Copy>
   <Message Text="Copied: %(DestinationList.FullPath)" Importance="High" />
  </Target>
 
- <Target Name="CleanDev" AfterTargets="Clean"
-         Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
+ <Target Name="CleanDev" AfterTargets="Clean" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
   <Delete Files="$(PluginOutDir)$(TargetName)$(TargetExt)">
    <Output TaskParameter="DeletedFiles" ItemName="DeletedList" />
   </Delete>

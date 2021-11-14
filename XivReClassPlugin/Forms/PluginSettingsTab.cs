@@ -12,6 +12,7 @@ namespace XivReClassPlugin.Forms {
             CheckBoxNamespace.Checked = XivReClassPluginExt.Settings.ShowNamespaces;
             CheckBoxNamespacePointer.Checked = XivReClassPluginExt.Settings.ShowNamespacesOnPointer;
             CheckBoxUseNamed.Checked = XivReClassPluginExt.Settings.UseNamedAddresses;
+            CheckBoxInheritance.Checked = XivReClassPluginExt.Settings.ShowInheritance;
         }
 
         private void OpenDataButton_Click(object sender, EventArgs e) {
@@ -55,6 +56,13 @@ namespace XivReClassPlugin.Forms {
             if (sender is not CheckBox cb)
                 return;
             XivReClassPluginExt.Settings.UseNamedAddresses = cb.Checked;
+            XivReClassPluginExt.Update();
+        }
+
+        private void CheckBoxInheritance_CheckedChanged(object sender, EventArgs e) {
+            if (sender is not CheckBox cb)
+                return;
+            XivReClassPluginExt.Settings.ShowInheritance = cb.Checked;
             XivReClassPluginExt.Update();
         }
     }

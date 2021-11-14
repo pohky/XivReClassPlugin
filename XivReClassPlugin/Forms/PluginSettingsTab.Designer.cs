@@ -37,6 +37,7 @@ namespace XivReClassPlugin.Forms
             this.CheckBoxNamespace = new System.Windows.Forms.CheckBox();
             this.CheckBoxNamespacePointer = new System.Windows.Forms.CheckBox();
             this.CheckBoxUseNamed = new System.Windows.Forms.CheckBox();
+            this.CheckBoxInheritance = new System.Windows.Forms.CheckBox();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +57,7 @@ namespace XivReClassPlugin.Forms
             this.flowLayoutPanel1.Controls.Add(this.CheckBoxNamespace);
             this.flowLayoutPanel1.Controls.Add(this.CheckBoxNamespacePointer);
             this.flowLayoutPanel1.Controls.Add(this.CheckBoxUseNamed);
+            this.flowLayoutPanel1.Controls.Add(this.CheckBoxInheritance);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -126,6 +128,17 @@ namespace XivReClassPlugin.Forms
             this.CheckBoxUseNamed.UseVisualStyleBackColor = true;
             this.CheckBoxUseNamed.CheckedChanged += new System.EventHandler(this.CheckBoxUseNamed_CheckedChanged);
             // 
+            // CheckBoxInheritance
+            // 
+            this.CheckBoxInheritance.AutoSize = true;
+            this.CheckBoxInheritance.Location = new System.Drawing.Point(3, 75);
+            this.CheckBoxInheritance.Name = "CheckBoxInheritance";
+            this.CheckBoxInheritance.Size = new System.Drawing.Size(179, 17);
+            this.CheckBoxInheritance.TabIndex = 6;
+            this.CheckBoxInheritance.Text = "Show full Inheritance on Classes";
+            this.CheckBoxInheritance.UseVisualStyleBackColor = true;
+            this.CheckBoxInheritance.CheckedChanged += new System.EventHandler(this.CheckBoxInheritance_CheckedChanged);
+            // 
             // PluginSettingsTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -149,5 +162,6 @@ namespace XivReClassPlugin.Forms
         private System.Windows.Forms.CheckBox CheckBoxNamespace;
         private System.Windows.Forms.CheckBox CheckBoxNamespacePointer;
         private System.Windows.Forms.CheckBox CheckBoxUseNamed;
+        private System.Windows.Forms.CheckBox CheckBoxInheritance;
     }
 }
