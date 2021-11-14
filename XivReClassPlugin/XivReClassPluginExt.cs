@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReClassNET;
 using ReClassNET.Forms;
@@ -35,26 +34,24 @@ namespace XivReClassPlugin {
 
         public static void Update() {
             DataManager.Update();
-            Task.Run(UpdateNamedAddresses);
+            UpdateAttached();
         }
 
-        public static async Task UpdateNamedAddresses() {
+        private static void UpdateAttached() {
             var process = Program.RemoteProcess;
             if (!process.IsValid) return;
-            var mod = process.GetModuleByName(Program.RemoteProcess.UnderlayingProcess.Name);
-            while (mod == null) {
-                mod = process.GetModuleByName(Program.RemoteProcess.UnderlayingProcess.Name);
-                await Task.Delay(20);
-            }
+
+            process.EnumerateRemoteSectionsAndModules(out _, out var modules);
+            var mod = modules.Find(m => m.Name.Equals(process.UnderlayingProcess.Name));
 
             InternalNamedAddresses.Clear();
             process.NamedAddresses.Clear();
 
-            if (!Settings.UseNamedAddresses)
+            if (mod == null || !Settings.UseNamedAddresses)
                 return;
 
             foreach (var def in DataManager.Classes) {
-                var name = Settings.ShowInheritance ? def.Value.ToString() : def.Value.Name;
+                var name = Settings.ShowInheritance ? def.Value.FullName : def.Value.Name;
                 name = Settings.ShowNamespaces ? name : Utils.RemoveNamespace(name);
                 var address = def.Key + (ulong)mod.Start;
                 InternalNamedAddresses[(nint)address] = name;

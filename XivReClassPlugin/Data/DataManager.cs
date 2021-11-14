@@ -36,8 +36,9 @@ namespace XivReClassPlugin.Data {
         }
 
         private static void UpdateFunctions() {
+            Functions.Clear();
             foreach (var kv in Data.Functions)
-                Functions[kv.Key] = kv.Value;
+                Functions[kv.Key - DataBaseAddress] = kv.Value;
 
             foreach (var kv in Data.Classes.Where(kv => kv.Value != null)) {
                 if (kv.Value == null || kv.Value.Functions.Count <= 0)
@@ -88,18 +89,5 @@ namespace XivReClassPlugin.Data {
             m_FunctionBlacklist.Add(address);
             return false;
         }
-    }
-
-    public class ClassDef {
-        private string? m_CachedName;
-        public string Name { get; }
-        public ulong Address { get; set; }
-        public ClassDef? Parent { get; set; }
-
-        public ClassDef(string name, XivClass? data) {
-            Name = name;
-        }
-
-        public override string ToString() => m_CachedName ??= Parent == null ? $"{Name}" : $"{Name} : {Parent}";
     }
 }
