@@ -47,7 +47,12 @@ namespace XivReClassPlugin {
             InternalNamedAddresses.Clear();
             process.NamedAddresses.Clear();
 
-            if (mod == null || !Settings.UseNamedAddresses)
+            if (mod == null)
+                return;
+
+            DataManager.UpdateVtables(process, mod);
+
+            if (!Settings.UseNamedAddresses)
                 return;
 
             foreach (var def in DataManager.Classes) {
