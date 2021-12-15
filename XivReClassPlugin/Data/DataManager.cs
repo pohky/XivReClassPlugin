@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using ReClassNET.Extensions;
-using ReClassNET.Memory;
+using ReClassNET;
 using YamlDotNet.Serialization;
 
 namespace XivReClassPlugin.Data {
@@ -22,8 +22,13 @@ namespace XivReClassPlugin.Data {
             if (string.IsNullOrEmpty(dataPath) || !File.Exists(dataPath))
                 Data = new ClientStructsData();
             else {
-                Data = new DeserializerBuilder().Build()
-                    .Deserialize<ClientStructsData>(File.ReadAllText(dataPath, Encoding.UTF8));
+                try {
+                    Data = new DeserializerBuilder().Build()
+                        .Deserialize<ClientStructsData>(File.ReadAllText(dataPath, Encoding.UTF8));
+                } catch (Exception ex) {
+                    Data = new ClientStructsData();
+                    Program.ShowException(ex);
+                }
             }
             UpdateClasses();
             UpdateFunctions();
@@ -35,25 +40,6 @@ namespace XivReClassPlugin.Data {
             m_ClassBlacklist.Clear();
             m_FunctionBlacklist.Clear();
             Data = new ClientStructsData();
-        }
-
-        public static void UpdateVtables(RemoteProcess process, Module mod) {
-            var vfuncs = new Dictionary<nint, string>();
-            foreach (var kvClass in Classes) {
-                var vtAddr = mod.Start + (nint)kvClass.Key;
-                foreach (var vf in kvClass.Value.GetVirtualFunctions()) {
-                    var vfaddr = process.ReadRemoteIntPtr(vtAddr + vf.Key * 8);
-                    var vfname = $"{kvClass.Value.Name}.{vf.Value}";
-                    if (!vfuncs.ContainsKey(vfaddr))
-                        vfuncs[vfaddr] = vfname;
-                }
-            }
-
-            foreach (var func in vfuncs) {
-                var offset = (ulong)(func.Key - mod.Start);
-                if (!Functions.ContainsKey(offset))
-                    Functions[offset] = func.Value;
-            }
         }
 
         private static void UpdateFunctions() {

@@ -49,9 +49,7 @@ namespace XivReClassPlugin {
 
             if (mod == null)
                 return;
-
-            DataManager.UpdateVtables(process, mod);
-
+            
             if (!Settings.UseNamedAddresses)
                 return;
 
@@ -88,9 +86,10 @@ namespace XivReClassPlugin {
                     try {
                         if (settingsForm.Controls.Find("settingsTabControl", true).FirstOrDefault() is not TabControl settingsTabControl)
                             return;
-                        var newTab = new TabPage(PluginName) { UseVisualStyleBackColor = true };
-                        newTab.Controls.Add(new PluginSettingsTab());
-                        settingsTabControl.TabPages.Add(newTab);
+                        
+                        var settingsTab = new TabPage(PluginName) { UseVisualStyleBackColor = true };
+                        settingsTab.Controls.Add(new PluginSettingsTab {Dock = DockStyle.Fill});
+                        settingsTabControl.TabPages.Add(settingsTab);
                     } catch (Exception ex) {
                         Program.ShowException(ex);
                     }

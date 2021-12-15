@@ -10,6 +10,7 @@ namespace XivReClassPlugin {
         private static string SettingsPath => Path.Combine(PathUtil.SettingsFolderPath, "XivReClassPlugin.xml");
         
         public string ClientStructsDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "GitHub\\FFXIVClientStructs\\ida\\data.yml");
+
         public bool FallbackModuleOffset = true;
         public bool ShowNamespaces = true;
         public bool ShowNamespacesOnPointer = false;
