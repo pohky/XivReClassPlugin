@@ -5,7 +5,7 @@ using ReClassNET.Memory;
 using ReClassNET.Nodes;
 using XivReClassPlugin.Data;
 
-namespace XivReClassPlugin {
+namespace XivReClassPlugin.NodeReaders {
     public class XivClassNodeReader : INodeInfoReader {
         public string? ReadNodeInfo(BaseHexCommentNode node, IRemoteMemoryReader reader, MemoryBuffer memory, IntPtr nodeAddress, IntPtr nodeValue) {
             if (nodeValue == IntPtr.Zero || nodeAddress == IntPtr.Zero)
@@ -14,11 +14,11 @@ namespace XivReClassPlugin {
             if (XivReClassPluginExt.Settings.UseNamedAddresses && Program.RemoteProcess.NamedAddresses.ContainsKey(nodeValue))
                 return null;
 
-            var info = GetNameForAddress(nodeValue, XivReClassPluginExt.Settings.ShowNamespaces);
+            var info = GetNameForAddress(nodeValue);
             if (string.IsNullOrEmpty(info)) {
                 var ptr = reader.ReadRemoteIntPtr(nodeValue);
                 if (ptr.MayBeValid()) {
-                    info = GetNameForPointer(ptr, XivReClassPluginExt.Settings.ShowNamespacesOnPointer);
+                    info = GetNameForPointer(ptr);
                     if (!string.IsNullOrEmpty(info))
                         info = $"-> {info}";
                 }
@@ -30,32 +30,25 @@ namespace XivReClassPlugin {
             return info;
         }
 
-        private static string? GetNameForPointer(nint address, bool includeNamespace) {
+        private static string? GetNameForPointer(nint address) {
             var offset = Utils.GetModuleOffset(address);
             if (offset == 0) return null;
 
             if (DataManager.TryGetClass((ulong)offset, out var classDef) && classDef != null)
-                return includeNamespace ? classDef.Name : Utils.RemoveNamespace(classDef.Name);
-
-            if (DataManager.TryGetFunction((ulong)offset, out var func) && func != null)
-                return includeNamespace ? func : Utils.RemoveNamespace(func);
-
+                return XivReClassPluginExt.Settings.ShowNamespacesOnPointer ? classDef.Name : Utils.RemoveNamespace(classDef.Name);
+            
             return null;
         }
 
-        private static string? GetNameForAddress(nint address, bool includeNamespace) {
+        private static string? GetNameForAddress(nint address) {
             var offset = Utils.GetModuleOffset(address);
             if (offset == 0) return null;
 
-            if (DataManager.TryGetClass((ulong)offset, out var classDef) && classDef != null) {
-                var name = XivReClassPluginExt.Settings.ShowInheritance ? classDef.FullName : classDef.Name;
-                return includeNamespace ? name : Utils.RemoveNamespace(name);
-            }
+            if (!DataManager.TryGetClass((ulong)offset, out var classDef) || classDef == null)
+                return null;
 
-            if (DataManager.TryGetFunction((ulong)offset, out var func) && func != null)
-                return includeNamespace ? func : Utils.RemoveNamespace(func);
-
-            return null;
+            var name = XivReClassPluginExt.Settings.ShowInheritance ? classDef.FullName : classDef.Name;
+            return XivReClassPluginExt.Settings.ShowNamespaces ? name : Utils.RemoveNamespace(name);
         }
     }
 }

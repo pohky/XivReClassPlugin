@@ -11,9 +11,16 @@ namespace XivReClassPlugin.Data {
 
         public string FullName => m_CachedName ??= Parent == null ? $"{Name}" : $"{Name} : {Parent.FullName}";
 
+        public readonly Dictionary<ulong, string> Instances = new();
+
         public ClassDef(string name, XivClass? data) {
             Name = name;
             m_Data = data;
+            if (data?.Instances == null)
+                return;
+            var idx = 0;
+            foreach (var instance in data.Instances)
+                Instances.Add(instance.Address - DataManager.DataBaseAddress, $"{name}_{instance.Name ?? $"Instance{idx++}"}");
         }
 
         public Dictionary<int, string> GetVirtualFunctions() {

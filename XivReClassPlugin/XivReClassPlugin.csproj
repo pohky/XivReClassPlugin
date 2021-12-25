@@ -13,7 +13,7 @@
   <Product>ReClass.NET Plugin</Product>
   <Authors>Pohky</Authors>
   <Description>FFXIVClientStructs Plugin</Description>
-  <Version>1.0.0.7</Version>
+  <Version>1.0.0.8</Version>
 
   <ReClassExe>A:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
   <PluginOutDir>A:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
@@ -23,6 +23,21 @@
   <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
   <PackageReference Include="YamlDotNet" Version="11.2.1" />
   <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
+ </ItemGroup>
+
+  <ItemGroup>
+   <Compile Update="Resources\XivReClassResources.Designer.cs">
+     <DesignTime>True</DesignTime>
+     <AutoGen>True</AutoGen>
+     <DependentUpon>XivReClassResources.resx</DependentUpon>
+   </Compile>
+ </ItemGroup>
+
+ <ItemGroup>
+   <EmbeddedResource Update="Resources\XivReClassResources.resx">
+     <Generator>ResXFileCodeGenerator</Generator>
+     <LastGenOutput>XivReClassResources.Designer.cs</LastGenOutput>
+   </EmbeddedResource>
  </ItemGroup>
 
  <Target Name="CopyDev" AfterTargets="ILRepack" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
