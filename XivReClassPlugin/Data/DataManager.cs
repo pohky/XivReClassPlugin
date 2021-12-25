@@ -56,11 +56,36 @@ namespace XivReClassPlugin.Data {
                         var def = new ClassDef(name, dataClass.Value) {
                             Address = vt.Address - DataBaseAddress
                         };
-                        if (!string.IsNullOrEmpty(vt.Base) && Data.Classes.TryGetValue(vt.Base, out var parent))
-                            def.Parent = new ClassDef(vt.Base, parent);
+
+                        var parentName = vt.Base;
+                        var classDef = def;
+                        
+                        while (!string.IsNullOrEmpty(parentName)) {
+                            if (Data.Classes.TryGetValue(parentName, out var parent) && parent != null) {
+                                classDef.Parent = new ClassDef(parentName, parent);
+                                classDef = classDef.Parent;
+                                parentName = parent.VirtualTables.FirstOrDefault()?.Base ?? string.Empty;
+                            } else {
+                                classDef.Parent = new ClassDef(parentName, null);
+                                break;
+                            }
+                        }
+
                         classDefs.Add(def);
                     }
                 } else classDefs.Add(new ClassDef(name, dataClass.Value));
+            }
+
+            foreach (var def in classDefs.ToList()) {
+                var parent = def.Parent;
+                if (parent != null) continue;
+
+                if (Data.Classes.TryGetValue(def.Name, out var dataClass) && dataClass != null) {
+                    var vt = dataClass.VirtualTables.FirstOrDefault();
+                    if (vt == null || string.IsNullOrEmpty(vt.Base)) continue;
+                    if (Data.Classes.TryGetValue(vt.Base, out dataClass) && dataClass != null)
+                        def.Parent = new ClassDef(vt.Base, dataClass);
+                }
             }
 
             Classes.Clear();
