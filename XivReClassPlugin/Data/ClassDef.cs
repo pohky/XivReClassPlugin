@@ -19,8 +19,10 @@ namespace XivReClassPlugin.Data {
             if (data?.Instances == null)
                 return;
             var idx = 0;
-            foreach (var instance in data.Instances)
-                Instances.Add(instance.Address - DataManager.DataBaseAddress, $"{name}_{instance.Name ?? $"Instance{idx++}"}");
+            foreach (var instance in data.Instances) {
+                var instanceName = string.IsNullOrEmpty(instance.Name) ? $"Instance{(idx++ == 0 ? string.Empty : $"{idx}")}" : instance.Name;
+                Instances.Add(instance.Address - DataManager.DataBaseAddress, $"{name}_{instanceName}");
+            }
         }
 
         public Dictionary<int, string> GetVirtualFunctions() {
