@@ -14,17 +14,24 @@ namespace XivReClassPlugin.NodeReaders {
             if (XivReClassPluginExt.Settings.UseNamedAddresses && Program.RemoteProcess.NamedAddresses.ContainsKey(nodeValue))
                 return null;
 
-            var info = GetNameForAddress(nodeValue);
-            if (string.IsNullOrEmpty(info)) {
-                var ptr = reader.ReadRemoteIntPtr(nodeValue);
-                if (ptr.MayBeValid()) {
-                    info = GetNameForPointer(ptr);
-                    if (!string.IsNullOrEmpty(info))
-                        info = $"-> {info}";
-                }
+            //var info = GetNameForAddress(nodeValue);
+            //if (string.IsNullOrEmpty(info)) {
+            //    var ptr = reader.ReadRemoteIntPtr(nodeValue);
+            //    if (ptr.MayBeValid()) {
+            //        info = GetNameForPointer(ptr);
+            //        if (!string.IsNullOrEmpty(info))
+            //            info = $"-> {info}";
+            //    }
+            //}
+            string? info = null;
+            var ptr = reader.ReadRemoteIntPtr(nodeValue);
+            if (ptr.MayBeValid()) {
+                info = GetNameForPointer(ptr);
+                if (!string.IsNullOrEmpty(info))
+                    info = $"-> {info}";
             }
 
-            if (XivReClassPluginExt.Settings.FallbackModuleOffset && string.IsNullOrEmpty(info))
+            if (XivReClassPluginExt.Settings.FallbackModuleOffset && !XivReClassPluginExt.InternalNamedAddresses.ContainsKey(nodeValue) && string.IsNullOrEmpty(info))
                 info = Utils.GetModuleRelativeName(nodeValue);
 
             return info;
