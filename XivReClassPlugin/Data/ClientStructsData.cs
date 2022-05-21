@@ -13,7 +13,7 @@ namespace XivReClassPlugin.Data {
     public class XivClass {
         [YamlMember(Alias = "instances")] public List<XivInstance> Instances { get; set; } = new();
         [YamlMember(Alias = "funcs")] public Dictionary<ulong, string> Functions { get; set; } = new();
-        [YamlMember(Alias = "vtbls")] public List<XivVTable> VirtualTables { get; set; } = new();
+        [YamlMember(Alias = "vtbls")] public List<XivVTable>? VirtualTables { get; set; } = new();
         [YamlMember(Alias = "vfuncs")] public Dictionary<int, string> VirtualFunctions { get; set; } = new();
     }
 

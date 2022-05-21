@@ -20,15 +20,20 @@ namespace XivReClassPlugin.Forms {
             CheckBoxNamespacePointer.Checked = XivReClassPluginExt.Settings.ShowNamespacesOnPointer;
             CheckBoxNamespacePointer.CheckedChanged += CheckBoxNamespacePointer_CheckedChanged;
 
-            CheckBoxUseNamed.Checked = XivReClassPluginExt.Settings.UseNamedAddresses;
-            CheckBoxUseNamed.CheckedChanged += CheckBoxUseNamed_CheckedChanged;
-
+            RadioButtonNamedAddress.Checked = XivReClassPluginExt.Settings.UseNamedAddresses;
+            RadioButtonRtti.Checked = !XivReClassPluginExt.Settings.UseNamedAddresses;
+            
             CheckBoxInheritance.Checked = XivReClassPluginExt.Settings.ShowInheritance;
             CheckBoxInheritance.CheckedChanged += CheckBoxInheritance_CheckedChanged;
         }
 
         private void OpenDataButton_Click(object sender, EventArgs e) {
             DataFileDialog.ShowDialog();
+        }
+
+        private void ButtonReloadData_Click(object sender, EventArgs e) {
+            XivReClassPluginExt.Settings.ClientStructsDataPath = TextBoxDataFile.Text;
+            XivReClassPluginExt.Update();
         }
 
         private void DataFileDialog_FileOk(object sender, CancelEventArgs e) {
@@ -46,17 +51,27 @@ namespace XivReClassPlugin.Forms {
             if (File.Exists(tb.Text))
                 XivReClassPluginExt.Update();
         }
+        
+        private void TextBoxDataFile_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode != Keys.Return)
+                return;
+            if (sender is not TextBox tb)
+                return;
+            XivReClassPluginExt.Settings.ClientStructsDataPath = tb.Text;
+            XivReClassPluginExt.Update();
+        }
+
+        private void TextBoxDataFile_Leave(object sender, EventArgs e) {
+            if (sender is not TextBox tb)
+                return;
+            XivReClassPluginExt.Settings.ClientStructsDataPath = tb.Text;
+            XivReClassPluginExt.Update();
+        }
+
 
         private void CheckBoxShowOffset_CheckedChanged(object sender, EventArgs e) {
             if (sender is CheckBox cb)
                 XivReClassPluginExt.Settings.FallbackModuleOffset = cb.Checked;
-        }
-
-        private void CheckBoxNamespace_CheckedChanged(object sender, EventArgs e) {
-            if (sender is not CheckBox cb)
-                return;
-            XivReClassPluginExt.Settings.ShowNamespaces = cb.Checked;
-            XivReClassPluginExt.Update();
         }
 
         private void CheckBoxNamespacePointer_CheckedChanged(object sender, EventArgs e) {
@@ -64,10 +79,11 @@ namespace XivReClassPlugin.Forms {
                 XivReClassPluginExt.Settings.ShowNamespacesOnPointer = cb.Checked;
         }
 
-        private void CheckBoxUseNamed_CheckedChanged(object sender, EventArgs e) {
+
+        private void CheckBoxNamespace_CheckedChanged(object sender, EventArgs e) {
             if (sender is not CheckBox cb)
                 return;
-            XivReClassPluginExt.Settings.UseNamedAddresses = cb.Checked;
+            XivReClassPluginExt.Settings.ShowNamespaces = cb.Checked;
             XivReClassPluginExt.Update();
         }
 
@@ -78,25 +94,14 @@ namespace XivReClassPlugin.Forms {
             XivReClassPluginExt.Update();
         }
 
-        private void TextBoxDataFile_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode != Keys.Return)
-                return;
-            if (sender is not TextBox tb)
-                return;
-            XivReClassPluginExt.Settings.ClientStructsDataPath = tb.Text;
+
+        private void RadioButtonNamedAddress_Click(object sender, EventArgs e) {
+            XivReClassPluginExt.Settings.UseNamedAddresses = true;
             XivReClassPluginExt.Update();
         }
 
-        private void ButtonReloadData_Click(object sender, EventArgs e) {
-            var tb = TextBoxDataFile;
-            XivReClassPluginExt.Settings.ClientStructsDataPath = tb.Text;
-            XivReClassPluginExt.Update();
-        }
-
-        private void TextBoxDataFile_Leave(object sender, EventArgs e) {
-            if (sender is not TextBox tb)
-                return;
-            XivReClassPluginExt.Settings.ClientStructsDataPath = tb.Text;
+        private void RadioButtonRtti_Click(object sender, EventArgs e) {
+            XivReClassPluginExt.Settings.UseNamedAddresses = false;
             XivReClassPluginExt.Update();
         }
     }
