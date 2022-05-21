@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using MonoMod.RuntimeDetour;
 using ReClassNET;
+using ReClassNET.Extensions;
 using ReClassNET.Forms;
-using ReClassNET.Logger;
 using ReClassNET.Memory;
 using ReClassNET.Nodes;
 using ReClassNET.Plugins;
@@ -15,33 +14,42 @@ using XivReClassPlugin.Data;
 using XivReClassPlugin.Forms;
 using XivReClassPlugin.NodeReaders;
 using XivReClassPlugin.Nodes;
-using Module = ReClassNET.Memory.Module;
 
 namespace XivReClassPlugin {
     public sealed class XivReClassPluginExt : Plugin {
         public static string PluginName => "XivReClass";
+        
         public static XivPluginSettings Settings { get; private set; } = null!;
+        
         public static readonly Dictionary<nint, string> InternalNamedAddresses = new();
         public static readonly Dictionary<string, nint> InternalInstanceNames = new();
+        
         public static Module? MainModule { get; private set; }
-        private Detour? m_GetModuleByNameDetour;
-        private Detour? m_ReadRttiInfoDetour;
+        
+        private static Detour? m_GetModuleByNameDetour;
+        private static Detour? m_ReadRttiInfoDetour;
 
         public override bool Initialize(IPluginHost host) {
             Settings = XivPluginSettings.Load();
             GlobalWindowManager.WindowAdded += OnWindowAdded;
             Program.RemoteProcess.ProcessAttached += OnProcessAttached;
-            DataManager.DataUpdated += OnDataUpdated;
             var cfg = new DetourConfig {ManualApply = true};
             m_GetModuleByNameDetour = new Detour(typeof(RemoteProcess).GetMethod("GetModuleByName")!, typeof(XivReClassPluginExt).GetMethod(nameof(GetModuleByNameDetour)), cfg);
             m_ReadRttiInfoDetour = new Detour(typeof(RemoteProcess).GetMethod("ReadRemoteRuntimeTypeInformation")!, typeof(XivReClassPluginExt).GetMethod(nameof(ReadRttiInfoDetour)), cfg);
+
+            var menu = host.MainWindow.MainMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text.Equals("Project"));
+            if (menu != null) {
+                var item = new ToolStripMenuItem("Generate ClientStructs Code", Resources.XivReClassResources.B16x16_Page_Code_Csharp);
+                item.Click += (_, _) => Program.MainForm.ShowCodeGeneratorForm(new CsCodeGenerator());
+                menu.DropDownItems.Add(item);
+            }
+
             return true;
         }
 
         public override void Terminate() {
             Settings.Save();
             Program.RemoteProcess.NamedAddresses.Clear();
-            DataManager.DataUpdated -= OnDataUpdated;
             GlobalWindowManager.WindowAdded -= OnWindowAdded;
             Program.RemoteProcess.ProcessAttached -= OnProcessAttached;
             m_GetModuleByNameDetour?.Dispose();
@@ -61,101 +69,123 @@ namespace XivReClassPlugin {
             return Program.RemoteProcess.Modules.FirstOrDefault(m => m.Name.Equals(name, StringComparison.InvariantCultureIgnoreCase))!;
         }
 
-        public override IReadOnlyList<INodeInfoReader> GetNodeInfoReaders() {
-            return new List<INodeInfoReader> {new XivClassNodeReader()};
-        }
-
-        public override CustomNodeTypes GetCustomNodeTypes() {
-            return new CustomNodeTypes {
-                NodeTypes = new[] { typeof(Utf8StringNode) },
-                Serializer = new Utf8StringSerializer(),
-                CodeGenerator = new Utf8StringGenerator()
-            };
-        }
-
         private void OnProcessAttached(RemoteProcess sender) {
-            MainModule = null;
-            if (!sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase)) {
-                DataManager.Clear();
-                InternalNamedAddresses.Clear();
-                InternalInstanceNames.Clear();
-                sender.NamedAddresses.Clear();
-                m_GetModuleByNameDetour?.Undo();
-                m_ReadRttiInfoDetour?.Undo();
-            } else {
+            InternalNamedAddresses.Clear();
+            InternalInstanceNames.Clear();
+            sender.NamedAddresses.Clear();
+            m_GetModuleByNameDetour?.Undo();
+            m_ReadRttiInfoDetour?.Undo();
+
+            sender.EnumerateRemoteSectionsAndModules(out _, out var modules);
+            MainModule = modules.Find(m => m.Name.Equals(sender.UnderlayingProcess.Name));
+
+            if (sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase))
                 Update();
-            }
         }
 
         public static void Update() {
-            DataManager.ReloadData();
-        }
-
-        private void OnDataUpdated() {
-            var process = Program.RemoteProcess;
-            if (!process.IsValid) return;
-
+            DataManager.Reload();
             InternalNamedAddresses.Clear();
             InternalInstanceNames.Clear();
-            process.NamedAddresses.Clear();
-            m_GetModuleByNameDetour?.Undo();
-
-            process.EnumerateRemoteSectionsAndModules(out _, out var modules);
-            MainModule = modules.Find(m => m.Name.Equals(process.UnderlayingProcess.Name));
-
-            if (MainModule == null)
+            Program.RemoteProcess.NamedAddresses.Clear();
+            if (DataManager.Classes.Count == 0)
                 return;
-            
-            foreach (var def in DataManager.Classes) {
-                var name = Settings.ShowInheritance ? def.Value.FullName : def.Value.Name;
-                name = Settings.ShowNamespaces ? name : Utils.RemoveNamespace(name);
-                InternalNamedAddresses[(nint)(def.Key + (ulong)MainModule.Start)] = name;
-                foreach (var instance in def.Value.Instances) {
-                    InternalNamedAddresses[(nint)(instance.Key + (ulong)MainModule.Start)] = instance.Value;
-                    //InternalInstanceNames[instance.Value] = (nint)(instance.Key + (ulong)MainModule.Start);
+            SetupData();
+        }
+
+        private static void SetupData() {
+            if (!Program.RemoteProcess.IsValid || MainModule == null) return;
+
+            var pureCall = (nint)DataManager.Data.Functions.FirstOrDefault(kv => kv.Value.Equals("_purecall")).Key;
+            if (pureCall != 0) pureCall = MainModule.Start + (pureCall - (nint)DataManager.DataBaseAddress);
+
+            foreach (var info in DataManager.Classes) {
+                var className = Settings.ShowInheritance ?
+                    info.GetInheritanceName(Settings.ShowNamespaces) :
+                    Settings.ShowNamespaces ? info.FullName : info.Name;
+                var classAddress = MainModule.Start + (nint)info.Offset;
+                
+                InternalNamedAddresses[classAddress] = className;
+
+                foreach (var function in info.Functions)
+                    InternalNamedAddresses[(nint)function.Key + MainModule.Start] = function.Value;
+                
+                foreach (var instance in info.Instances)
+                    InternalInstanceNames[instance.Value] = MainModule.Start + (nint)instance.Key;
+
+                foreach (var kv in DataManager.Data.Globals) {
+                    var address = MainModule.Start + (nint)(kv.Key - DataManager.DataBaseAddress);
+                    var name = kv.Value;
+                    InternalInstanceNames[name] = address;
                 }
+
+                foreach (var kv in DataManager.Data.Functions) {
+                    var address = MainModule.Start + (nint)(kv.Key - DataManager.DataBaseAddress);
+                    var name = kv.Value;
+                    InternalNamedAddresses[address] = name;
+                }
+
+                var list = new List<ClassInfo>();
+                var classInfo = info;
+                while (classInfo != null) {
+                    list.Add(classInfo);
+                    classInfo = classInfo.ParentClass;
+                }
+
+                list.Reverse();
+                list.ForEach(ci => {
+                    if (ci.Offset == 0) return;
+                    var vftable = MainModule.Start + (nint)ci.Offset;
+                    foreach (var vf in ci.VirtualFunctions) {
+                        var addr = (nint)Program.RemoteProcess.ReadRemoteIntPtr(vftable + vf.Key * 8);
+                        if (addr != 0 && addr != pureCall && !InternalNamedAddresses.ContainsKey(addr))
+                            InternalNamedAddresses[addr] = $"{ci.Name}.{vf.Value}";
+                    }
+                });
             }
 
-            foreach (var xivClass in DataManager.Data.Classes) {
-                var data = xivClass.Value;
-                if(data == null) continue;
-                var idx = 0;
-                foreach (var instance in data.Instances) {
-                    var instanceName = string.IsNullOrEmpty(instance.Name) ? $"Instance{(idx++ == 0 ? string.Empty : $"{idx}")}" : instance.Name;
-                    var addr = (nint)(instance.Address - DataManager.DataBaseAddress) + MainModule.Start;
-                    InternalInstanceNames[$"{xivClass.Key}_{instanceName}"] = addr;
-                }
-            }
-            
             if (InternalInstanceNames.Count > 0)
                 m_GetModuleByNameDetour?.Apply();
-            
+
             if (!Settings.UseNamedAddresses) {
                 m_ReadRttiInfoDetour?.Apply();
+                Program.RemoteProcess.NamedAddresses.Clear();
                 return;
             }
 
             m_ReadRttiInfoDetour?.Undo();
 
             foreach (var kv in InternalNamedAddresses)
-                process.NamedAddresses[kv.Key] = kv.Value;
+                Program.RemoteProcess.NamedAddresses[kv.Key] = kv.Value;
+        }
+
+        public override IReadOnlyList<INodeInfoReader> GetNodeInfoReaders() {
+            return new List<INodeInfoReader> {new XivClassNodeReader()};
+        }
+
+        public override CustomNodeTypes GetCustomNodeTypes() {
+            return new CustomNodeTypes {
+                NodeTypes = new[] {typeof(Utf8StringNode)},
+                Serializer = new Utf8StringSerializer(),
+                CodeGenerator = new Utf8StringGenerator()
+            };
         }
 
         private static void OnWindowAdded(object sender, GlobalWindowManagerEventArgs e) {
-            if (e.Form is SettingsForm settingsForm) {
-                settingsForm.Shown += delegate {
-                    try {
-                        if (settingsForm.Controls.Find("settingsTabControl", true).FirstOrDefault() is not TabControl settingsTabControl)
-                            return;
-                        
-                        var settingsTab = new TabPage(PluginName) { UseVisualStyleBackColor = true };
-                        settingsTab.Controls.Add(new PluginSettingsTab {Dock = DockStyle.Fill});
-                        settingsTabControl.TabPages.Add(settingsTab);
-                    } catch (Exception ex) {
-                        Program.ShowException(ex);
-                    }
-                };
-            }
-		}
+            if (e.Form is not SettingsForm settingsForm)
+                return;
+            settingsForm.Shown += delegate {
+                try {
+                    if (settingsForm.Controls.Find("settingsTabControl", true).FirstOrDefault() is not TabControl settingsTabControl)
+                        return;
+
+                    var settingsTab = new TabPage(PluginName) {UseVisualStyleBackColor = true};
+                    settingsTab.Controls.Add(new PluginSettingsTab {Dock = DockStyle.Fill});
+                    settingsTabControl.TabPages.Add(settingsTab);
+                } catch (Exception ex) {
+                    Program.ShowException(ex);
+                }
+            };
+        }
     }
 }

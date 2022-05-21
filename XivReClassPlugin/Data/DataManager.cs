@@ -9,99 +9,52 @@ using YamlDotNet.Serialization;
 namespace XivReClassPlugin.Data {
     public static class DataManager {
         public const ulong DataBaseAddress = 0x1_4000_0000;
-
         public static ClientStructsData Data { get; private set; } = new();
 
-        public static readonly Dictionary<ulong, ClassDef> Classes = new();
-        private static readonly HashSet<ulong> m_ClassBlacklist = new();
+        public static List<ClassInfo> Classes { get; } = new();
+        public static Dictionary<ulong, ClassInfo> ClassMap { get; } = new();
 
-        public static event Action? DataUpdated;
+        public static bool TryGetClassByOffset(ulong offset, out ClassInfo info) {
+            return ClassMap.TryGetValue(offset, out info);
+        }
         
-        public static void ReloadData() {
+        public static void Reload() {
             var path = XivReClassPluginExt.Settings.ClientStructsDataPath;
-
-            if (string.IsNullOrEmpty(path) || !File.Exists(path)) {
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
                 Data = new ClientStructsData();
-                UpdateData();
-                return;
+            else {
+                try {
+                    Data = new DeserializerBuilder().Build().Deserialize<ClientStructsData>(File.ReadAllText(path, Encoding.UTF8));
+                } catch (Exception ex) {
+                    Data = new ClientStructsData();
+                    Program.ShowException(ex);
+                }
             }
-
-            try {
-                Data = new DeserializerBuilder().Build().Deserialize<ClientStructsData>(File.ReadAllText(path, Encoding.UTF8));
-            } catch (Exception ex) {
-                Data = new ClientStructsData();
-                Program.ShowException(ex);
-            }
-
-            UpdateData();
-        }
-
-        public static void UpdateData() {
             UpdateClasses();
-            DataUpdated?.Invoke();
-        }
-
-        public static void Clear() {
-            Classes.Clear();
-            m_ClassBlacklist.Clear();
-            Data = new ClientStructsData();
         }
 
         private static void UpdateClasses() {
-            var classDefs = new List<ClassDef>();
-            foreach (var dataClass in Data.Classes) {
-                var name = dataClass.Key;
-                if (dataClass.Value?.VirtualTables.Count > 0) {
-                    foreach (var vt in dataClass.Value.VirtualTables) {
-                        var def = new ClassDef(name, dataClass.Value) {
-                            Address = vt.Address - DataBaseAddress
-                        };
-
-                        var parentName = vt.Base;
-                        var classDef = def;
-                        
-                        while (!string.IsNullOrEmpty(parentName)) {
-                            if (Data.Classes.TryGetValue(parentName, out var parent) && parent != null) {
-                                classDef.Parent = new ClassDef(parentName, parent);
-                                classDef = classDef.Parent;
-                                parentName = parent.VirtualTables.FirstOrDefault()?.Base ?? string.Empty;
-                            } else {
-                                classDef.Parent = new ClassDef(parentName, null);
-                                break;
-                            }
+            Classes.Clear();
+            ClassMap.Clear();
+            foreach (var kv in Data.Classes) {
+                try {
+                    if (kv.Value is {VirtualTables: {Count: > 1}}) {
+                        foreach (var vTable in kv.Value.VirtualTables) {
+                            var vtInfo = new ClassInfo(Data, kv.Key, kv.Value, vTable);
+                            Classes.Add(vtInfo);
+                            if (vtInfo.Offset != 0)
+                                ClassMap[vtInfo.Offset] = vtInfo;
                         }
-
-                        classDefs.Add(def);
+                    } else {
+                        var info = new ClassInfo(Data, kv.Key, kv.Value, null);
+                        Classes.Add(info);
+                        if (info.Offset == 0) continue;
+                        ClassMap[info.Offset] = info;
                     }
-                } else classDefs.Add(new ClassDef(name, dataClass.Value));
-            }
-
-            foreach (var def in classDefs.ToList()) {
-                var parent = def.Parent;
-                if (parent != null) continue;
-
-                if (Data.Classes.TryGetValue(def.Name, out var dataClass) && dataClass != null) {
-                    var vt = dataClass.VirtualTables.FirstOrDefault();
-                    if (vt == null || string.IsNullOrEmpty(vt.Base)) continue;
-                    if (Data.Classes.TryGetValue(vt.Base, out dataClass) && dataClass != null)
-                        def.Parent = new ClassDef(vt.Base, dataClass);
+                } catch (Exception ex) {
+                    Program.ShowException(ex);
                 }
             }
-
-            Classes.Clear();
-            foreach (var def in classDefs.Where(d => d.Address != 0))
-                Classes.Add(def.Address, def);
-            classDefs.Clear();
-        }
-
-        public static bool TryGetClass(ulong address, out ClassDef? classDef) {
-            classDef = null;
-            if (m_ClassBlacklist.Contains(address))
-                return false;
-            if (Classes.TryGetValue(address, out classDef))
-                return true;
-            m_ClassBlacklist.Add(address);
-            return false;
         }
     }
 }
