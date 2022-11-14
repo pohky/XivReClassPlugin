@@ -97,7 +97,8 @@ namespace XivReClassPlugin {
             if (!Program.RemoteProcess.IsValid || MainModule == null) return;
 
             var pureCall = (nint)DataManager.Data.Functions.FirstOrDefault(kv => kv.Value.Equals("_purecall")).Key;
-            if (pureCall != 0) pureCall = MainModule.Start + (pureCall - (nint)DataManager.DataBaseAddress);
+            if (pureCall != 0)
+	            pureCall = (nint)((ulong)MainModule.Start + ((ulong)pureCall - DataManager.DataBaseAddress));
 
             foreach (var info in DataManager.Classes) {
                 var className = Settings.ShowInheritance ?

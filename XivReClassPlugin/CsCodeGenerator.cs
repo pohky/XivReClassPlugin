@@ -52,8 +52,11 @@ namespace XivReClassPlugin {
             using var sw = new StringWriter();
             using var iw = new IndentedTextWriter(sw, "\t");
 
+            iw.WriteLine("using System;");
             iw.WriteLine("using System.Numerics;");
             iw.WriteLine("using System.Runtime.InteropServices;");
+            iw.WriteLine("using System.Runtime.CompilerServices;");
+            iw.WriteLine("using FFXIVClientStructs.FFXIV.Client.System.String;");
             iw.WriteLine();
 
             foreach (var enumDef in enums) {
@@ -110,7 +113,7 @@ namespace XivReClassPlugin {
             if (!string.IsNullOrEmpty(classNode.Comment))
                 writer.WriteLine($"// {classNode.Comment}");
 
-            writer.WriteLine($"[StructLayout(LayoutKind.Explicit, Size = 0x{classNode.MemorySize:X})]");
+            writer.WriteLine($"[StructLayout(LayoutKind.Explicit, Size = 0x{classNode.MemorySize:X2})]");
             writer.WriteLine($"public unsafe struct {classNode.Name} {{");
             
             writer.Indent++;
@@ -123,9 +126,9 @@ namespace XivReClassPlugin {
                         writer.WriteLine(attribute);
 
                     if (node is BaseTextNode tn && type.Contains("fixed"))
-                        writer.Write($"[FieldOffset(0x{node.Offset:X})] public {type} {node.Name}[{tn.Length}]; // string");
+                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] public {type} {node.Name}[{tn.Length}]; // string");
                     else {
-                        writer.Write($"[FieldOffset(0x{node.Offset:X})] public {type} {node.Name};");
+                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] public {type} {node.Name};");
                         if (!string.IsNullOrEmpty(node.Comment))
                             writer.Write($" // {node.Comment}");
                     }
@@ -133,16 +136,16 @@ namespace XivReClassPlugin {
                     writer.WriteLine();
                 } else if (node is ArrayNode arrNode) {
                     if (arrNode.InnerNode is ClassInstanceNode instanceNode) {
-                        writer.Write($"[FieldOffset(0x{node.Offset:X})] public fixed byte {node.Name}[{arrNode.Count} * 0x{instanceNode.MemorySize:X}];");
+                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed byte {node.Name}[{arrNode.Count} * 0x{instanceNode.MemorySize:X2}];");
                         writer.Write($" // {arrNode.Count} * {instanceNode.InnerNode.Name}");
                     } else {
                         if (arrNode.InnerNode is Utf8StringNode utf8) {
-                            writer.Write($"[FieldOffset(0x{node.Offset:X})] public fixed byte {node.Name}[{arrNode.Count} * 0x{utf8.MemorySize:X}];");
+                            writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed byte {node.Name}[{arrNode.Count} * 0x{utf8.MemorySize:X2}];");
                             writer.Write($" // {arrNode.Count} * Utf8String");
                         } else {
                             (type, _) = GetTypeDefinition(arrNode.InnerNode);
                             if (type != null)
-                                writer.Write($"[FieldOffset(0x{node.Offset:X})] public fixed {type} {node.Name}[{arrNode.Count}];");
+                                writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed {type} {node.Name}[{arrNode.Count}];");
                         }
                     }
                     writer.WriteLine();

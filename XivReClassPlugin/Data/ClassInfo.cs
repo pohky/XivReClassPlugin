@@ -4,8 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace XivReClassPlugin.Data {
     public class ClassInfo {
-        private static readonly Regex m_NameRegex = new("\\w+::", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-        private static readonly Regex m_NamespaceSplitRegex = new("(?(?=.*<)::|::(?!.*>))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex NameRegex = new("\\w+::", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private static readonly Regex NamespaceSplitRegex = new("(?(?=.*<)::|::(?!.*>))", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         private string m_InheritanceNameCache = string.Empty;
         private string m_InheritanceNameFullCache = string.Empty;
@@ -20,8 +20,8 @@ namespace XivReClassPlugin.Data {
         public Dictionary<ulong, string> Instances { get; } = new();
         
         public ClassInfo(ClientStructsData data, string rawName, XivClass? xivClass, XivVTable? baseClass) {
-            Name = m_NameRegex.Replace(rawName, string.Empty);
-            var nsSplit = m_NamespaceSplitRegex.Split(rawName);
+            Name = NameRegex.Replace(rawName, string.Empty);
+            var nsSplit = NamespaceSplitRegex.Split(rawName);
             if (nsSplit.Length > 1) {
                 nsSplit[nsSplit.Length - 1] = Name;
                 Namespace = string.Join("::", nsSplit.Take(nsSplit.Length - 1));
