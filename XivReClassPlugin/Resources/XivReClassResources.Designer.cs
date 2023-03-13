@@ -63,9 +63,29 @@ namespace XivReClassPlugin.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap AtkValueIcon {
+            get {
+                object obj = ResourceManager.GetObject("AtkValueIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap B16x16_Page_Code_Csharp {
             get {
                 object obj = ResourceManager.GetObject("B16x16_Page_Code_Csharp", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap StdVectorIcon {
+            get {
+                object obj = ResourceManager.GetObject("StdVectorIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

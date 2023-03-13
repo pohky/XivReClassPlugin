@@ -21,9 +21,9 @@
 
  <ItemGroup>
   <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
-  <PackageReference Include="MonoMod" Version="22.1.4.3" />
-  <PackageReference Include="MonoMod.RuntimeDetour" Version="22.1.4.3" />
-  <PackageReference Include="YamlDotNet" Version="11.2.1" />
+  <PackageReference Include="MonoMod" Version="22.7.31.1" />
+  <PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" />
+  <PackageReference Include="YamlDotNet" Version="13.0.1" />
   <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
  </ItemGroup>
 
