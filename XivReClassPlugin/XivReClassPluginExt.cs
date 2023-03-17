@@ -112,7 +112,7 @@ public sealed class XivReClassPluginExt : Plugin {
 
 		var pureCall = (nint)DataManager.Data.Functions.FirstOrDefault(kv => kv.Value.Equals("_purecall")).Key;
 		if (pureCall != 0)
-			pureCall = (nint)((ulong)MainModule.Start + ((ulong)pureCall - DataManager.DataBaseAddress));
+			pureCall = MainModule.Start + pureCall;
 
 		foreach (var info in DataManager.Classes) {
 			var className = Settings.ShowInheritance ?
@@ -148,13 +148,13 @@ public sealed class XivReClassPluginExt : Plugin {
 		}
 
 		foreach (var kv in DataManager.Data.Globals) {
-			var address = MainModule.Start + (nint)(kv.Key - DataManager.DataBaseAddress);
+			var address = MainModule.Start + (nint)kv.Key;
 			var name = kv.Value;
 			InternalInstanceNames[name] = address;
 		}
 
 		foreach (var kv in DataManager.Data.Functions) {
-			var address = MainModule.Start + (nint)(kv.Key - DataManager.DataBaseAddress);
+			var address = MainModule.Start + (nint)kv.Key;
 			var name = kv.Value;
 			InternalNamedAddresses[address] = name;
 		}
