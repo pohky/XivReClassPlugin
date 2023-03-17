@@ -12,6 +12,8 @@ public class ModuleNamePatch {
 	private static readonly Regex AgentIdRegex = new("Agent\\((?<AgentId>\\d+)\\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 	public static bool Prefix(ref Module __result, string name) {
+		if (string.IsNullOrEmpty(name))
+			return true;
 		if (XivReClassPluginExt.InternalInstanceNames.TryGetValue(name, out var address)) {
 			__result = new Module {Start = address, Name = name};
 			return false;
