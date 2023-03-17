@@ -1,58 +1,57 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
- <PropertyGroup>
-  <TargetFramework>net472</TargetFramework>
-  <LangVersion>9.0</LangVersion>
-  <UseWindowsForms>true</UseWindowsForms>
-  <Nullable>enable</Nullable>
-  <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-  <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-  <CopyLocalLockfileAssemblies>true</CopyLocalLockfileAssemblies>
-  <Platforms>x64;x86</Platforms>
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <CopyLocalLockfileAssemblies>true</CopyLocalLockfileAssemblies>
+    <Platforms>x64;x86</Platforms>
 
-  <Product>ReClass.NET Plugin</Product>
-  <Authors>Pohky</Authors>
-  <Description>FFXIVClientStructs Plugin</Description>
-  <Version>1.0.2.1</Version>
+    <Product>ReClass.NET Plugin</Product>
+    <Authors>Pohky</Authors>
+    <Description>FFXIVClientStructs Plugin</Description>
+    <Version>1.0.2.1</Version>
 
-  <ReClassExe>D:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
-  <PluginOutDir>D:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
- </PropertyGroup>
-
- <ItemGroup>
-  <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
-  <PackageReference Include="MonoMod" Version="22.7.31.1" />
-  <PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" />
-  <PackageReference Include="YamlDotNet" Version="13.0.1" />
-  <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
- </ItemGroup>
+    <ReClassExe>D:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
+    <PluginOutDir>D:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
+  </PropertyGroup>
 
   <ItemGroup>
-   <Compile Update="Resources\XivReClassResources.Designer.cs">
-     <DesignTime>True</DesignTime>
-     <AutoGen>True</AutoGen>
-     <DependentUpon>XivReClassResources.resx</DependentUpon>
-   </Compile>
- </ItemGroup>
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
+    <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <PackageReference Include="YamlDotNet" Version="13.0.2" />
+    <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
+  </ItemGroup>
 
- <ItemGroup>
-   <EmbeddedResource Update="Resources\XivReClassResources.resx">
-     <Generator>ResXFileCodeGenerator</Generator>
-     <LastGenOutput>XivReClassResources.Designer.cs</LastGenOutput>
-   </EmbeddedResource>
- </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\XivReClassResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>XivReClassResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
- <Target Name="CopyDev" AfterTargets="ILRepack" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
- <Copy SourceFiles="$(OutputPath)$(TargetName)$(TargetExt)" DestinationFolder="$(PluginOutDir)">
-   <Output TaskParameter="DestinationFiles" ItemName="DestinationList" />
-  </Copy>
-  <Message Text="Copied: %(DestinationList.FullPath)" Importance="High" />
- </Target>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\XivReClassResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>XivReClassResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 
- <Target Name="CleanDev" AfterTargets="Clean" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
-  <Delete Files="$(PluginOutDir)$(TargetName)$(TargetExt)">
-   <Output TaskParameter="DeletedFiles" ItemName="DeletedList" />
-  </Delete>
-  <Message Text="Deleted: '%(DeletedList.FullPath)'" Importance="High" />
- </Target>
+  <Target Name="CopyDev" AfterTargets="ILRepack" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
+    <Copy SourceFiles="$(OutputPath)$(TargetName)$(TargetExt)" DestinationFolder="$(PluginOutDir)">
+      <Output TaskParameter="DestinationFiles" ItemName="DestinationList" />
+    </Copy>
+    <Message Text="Copied: %(DestinationList.FullPath)" Importance="High" />
+  </Target>
+
+  <Target Name="CleanDev" AfterTargets="Clean" Condition="$(Configuration.Contains('Release')) and Exists($(PluginOutDir))">
+    <Delete Files="$(PluginOutDir)$(TargetName)$(TargetExt)">
+      <Output TaskParameter="DeletedFiles" ItemName="DeletedList" />
+    </Delete>
+    <Message Text="Deleted: '%(DeletedList.FullPath)'" Importance="High" />
+  </Target>
 </Project>
