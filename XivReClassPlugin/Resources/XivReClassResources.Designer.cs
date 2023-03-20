@@ -73,9 +73,9 @@ namespace XivReClassPlugin.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap B16x16_Page_Code_Csharp {
+        internal static System.Drawing.Bitmap CSharpIcon {
             get {
-                object obj = ResourceManager.GetObject("B16x16_Page_Code_Csharp", resourceCulture);
+                object obj = ResourceManager.GetObject("CSharpIcon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

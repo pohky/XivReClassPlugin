@@ -22,7 +22,8 @@ public class AtkValueNode : BaseWrapperNode {
 		{ AtkValueType.Float, new FloatNode { Name = "FloatValue", Offset = 0x08 } },
 		{ AtkValueType.String, new Utf8TextPtrNode { Name = "StringValue", Offset = 0x08 } },
 		{ AtkValueType.String8, new Utf8TextPtrNode { Name = "String8Value", Offset = 0x08 } },
-		{ AtkValueType.AllocatedString, new Utf8TextPtrNode { Name = "AllocatedStringValue", Offset = 0x08 } }
+		{ AtkValueType.AllocatedString, new Utf8TextPtrNode { Name = "AllocatedStringValue", Offset = 0x08 } },
+		{ AtkValueType.Texture, new Hex64Node { Name = "TextureValue", Offset = 0x08 } }
 	};
 
 	public AtkValueNode() {
@@ -73,10 +74,8 @@ public class AtkValueNode : BaseWrapperNode {
 
 	public override Size Draw(DrawContext context, int x, int y) {
 		if (IsHidden && !IsWrapped)
-		{
 			return DrawHidden(context, x, y);
-		}
-			
+
 		var origX = x;
 		var origY = y;
 
@@ -133,6 +132,7 @@ public enum AtkValueType {
 	String = 0x06,
 	String8 = 0x08,
 	Vector = 0x09,
+	Texture = 0x0A,
 	AllocatedString = 0x26,
 	AllocatedVector = 0x29
 }

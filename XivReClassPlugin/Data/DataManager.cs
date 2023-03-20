@@ -10,19 +10,26 @@ using YamlDotNet.Serialization;
 
 namespace XivReClassPlugin.Data;
 
-public static class DataManager {
+public class DataManager {
 	private const ulong DataBaseAddress = 0x1_4000_0000;
-	public static ClientStructsData Data { get; private set; } = new();
+	public readonly XivReClassPluginExt Plugin;
+	public ClientStructsData Data { get; private set; } = new();
 
-	public static List<ClassInfo> Classes { get; } = new();
-	public static Dictionary<ulong, ClassInfo> ClassMap { get; } = new();
+	public List<ClassInfo> Classes { get; } = new();
+	public Dictionary<ulong, ClassInfo> ClassMap { get; } = new();
 
-	public static bool TryGetClassByOffset(ulong offset, out ClassInfo info) {
+	public DataManager(XivReClassPluginExt plugin) {
+		Plugin = plugin;
+	}
+
+	public bool TryGetClassByOffset(ulong offset, out ClassInfo info) {
 		return ClassMap.TryGetValue(offset, out info);
 	}
 
-	public static void Reload() {
-		var path = XivReClassPluginExt.Settings.ClientStructsDataPath;
+	public void Reload() {
+		Classes.Clear();
+		ClassMap.Clear();
+		var path = Plugin.Settings.ClientStructsDataPath;
 		if (string.IsNullOrEmpty(path) || !File.Exists(path))
 			Data = new ClientStructsData();
 		else {
@@ -39,9 +46,7 @@ public static class DataManager {
 		UpdateClasses();
 	}
 
-	private static void UpdateClasses() {
-		Classes.Clear();
-		ClassMap.Clear();
+	private void UpdateClasses() {
 		foreach (var kv in Data.Classes) {
 			try {
 				if (kv.Value is { VirtualTables.Count: > 1 }) {
