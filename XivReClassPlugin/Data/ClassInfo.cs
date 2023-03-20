@@ -36,10 +36,9 @@ public class ClassInfo {
 		var baseVtable = baseClass ?? xivClass.VirtualTables?.FirstOrDefault();
 
 		Offset = baseVtable?.Address ?? 0;
-		if (Offset != 0) Offset -= DataManager.DataBaseAddress;
-
+		
 		foreach (var func in xivClass.Functions)
-			Functions[func.Key - DataManager.DataBaseAddress] = $"{FullName}.{func.Value}";
+			Functions[func.Key] = $"{FullName}.{func.Value}";
 
 		foreach (var vf in xivClass.VirtualFunctions)
 			VirtualFunctions[vf.Key] = vf.Value;
@@ -58,9 +57,8 @@ public class ClassInfo {
 
 		var instanceIndex = 0;
 		foreach (var instance in xivClass.Instances) {
-			var offset = instance.Address - DataManager.DataBaseAddress;
 			var name = !string.IsNullOrEmpty(instance.Name) ? instance.Name : $"Instance{(instanceIndex++ == 0 ? string.Empty : instanceIndex.ToString())}";
-			Instances[offset] = $"{FullName}_{name}";
+			Instances[instance.Address] = $"{FullName}_{name}";
 		}
 	}
 

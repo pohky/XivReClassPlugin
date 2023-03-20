@@ -1,41 +1,30 @@
-﻿using System;
-using ReClassNET;
+﻿using ReClassNET;
 using ReClassNET.Extensions;
 using ReClassNET.Memory;
 using ReClassNET.Nodes;
-using XivReClassPlugin.Data;
 
-namespace XivReClassPlugin.NodeReaders; 
+namespace XivReClassPlugin.NodeReaders;
 
 public class XivClassNodeReader : INodeInfoReader {
-	public string? ReadNodeInfo(BaseHexCommentNode node, IRemoteMemoryReader reader, MemoryBuffer memory, IntPtr nodeAddress, IntPtr nodeValue) {
-		if (nodeValue == IntPtr.Zero || nodeValue <= (nint)0x10_000 || nodeAddress == IntPtr.Zero)
-			return null;
-            
-		if (XivReClassPluginExt.Settings.UseNamedAddresses && Program.RemoteProcess.NamedAddresses.ContainsKey(nodeValue))
-			return null;
+	public readonly XivReClassPluginExt Plugin;
 
-		string? info = null;
-		var ptr = reader.ReadRemoteIntPtr(nodeValue);
-		if (ptr.MayBeValid()) {
-			info = GetNameForPointer(ptr);
-			if (!string.IsNullOrEmpty(info))
-				info = $"-> {info}";
-		}
-
-		if (XivReClassPluginExt.Settings.FallbackModuleOffset && !XivReClassPluginExt.InternalNamedAddresses.ContainsKey(nodeValue) && string.IsNullOrEmpty(info))
-			info = Utils.GetModuleRelativeName(nodeValue);
-
-		return info;
+	public XivClassNodeReader(XivReClassPluginExt plugin) {
+		Plugin = plugin;
 	}
 
-	private static string? GetNameForPointer(nint address) {
-		var offset = Utils.GetModuleOffset(address);
-		if (offset == 0) return null;
+	public string? ReadNodeInfo(BaseHexCommentNode node, IRemoteMemoryReader reader, MemoryBuffer memory, nint nodeAddress, nint nodeValue) {
+		if (nodeValue <= 0x10_000 || nodeAddress == 0)
+			return null;
 
-		if (DataManager.TryGetClassByOffset((ulong)offset, out var info))
-			return XivReClassPluginExt.Settings.ShowNamespacesOnPointer ? info.FullName : info.Name;
-            
+		if (Plugin.Settings.UseNamedAddresses && Program.RemoteProcess.NamedAddresses.ContainsKey(nodeValue))
+			return null;
+
+		var ptr = reader.ReadRemoteIntPtr(nodeValue);
+		if (ptr.MayBeValid() && Plugin.Symbols.TryGetClassName(ptr, out var className, Plugin.Settings.ShowNamespacesOnPointer))
+			return $"-> {className}";
+
+		if (Plugin.Settings.FallbackModuleOffset && !Plugin.Symbols.TryGetName(nodeValue, out _))
+			return Plugin.Symbols.GetRelativeAddressName(nodeValue);
 		return null;
 	}
 }
