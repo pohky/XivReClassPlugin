@@ -1,5 +1,5 @@
 ﻿
-namespace XivReClassPlugin.Forms
+namespace XivReClassPlugin.Forms.Controls
 {
     partial class PluginSettingsTab
     {

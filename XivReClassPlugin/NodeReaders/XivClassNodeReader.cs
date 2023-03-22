@@ -6,25 +6,22 @@ using ReClassNET.Nodes;
 namespace XivReClassPlugin.NodeReaders;
 
 public class XivClassNodeReader : INodeInfoReader {
-	public readonly XivReClassPluginExt Plugin;
-
-	public XivClassNodeReader(XivReClassPluginExt plugin) {
-		Plugin = plugin;
-	}
-
 	public string? ReadNodeInfo(BaseHexCommentNode node, IRemoteMemoryReader reader, MemoryBuffer memory, nint nodeAddress, nint nodeValue) {
 		if (nodeValue <= 0x10_000 || nodeAddress == 0)
 			return null;
 
-		if (Plugin.Settings.UseNamedAddresses && Program.RemoteProcess.NamedAddresses.ContainsKey(nodeValue))
+		if (Ffxiv.Settings.UseNamedAddresses && Program.RemoteProcess.NamedAddresses.ContainsKey(nodeValue))
 			return null;
 
 		var ptr = reader.ReadRemoteIntPtr(nodeValue);
-		if (ptr.MayBeValid() && Plugin.Symbols.TryGetClassName(ptr, out var className, Plugin.Settings.ShowNamespacesOnPointer))
+		if (ptr.MayBeValid() && Ffxiv.Symbols.TryGetClassName(ptr, out var className, Ffxiv.Settings.ShowNamespacesOnPointer))
 			return $"-> {className}";
 
-		if (Plugin.Settings.FallbackModuleOffset && !Plugin.Symbols.TryGetName(nodeValue, out _))
-			return Plugin.Symbols.GetRelativeAddressName(nodeValue);
+		if (Ffxiv.Settings.FallbackModuleOffset && !Ffxiv.Symbols.NamedAddresses.ContainsKey(nodeValue)) {
+			var offset = Ffxiv.Memory.GetMainModuleOffset(nodeValue);
+			if (offset != 0)
+				return $"{Ffxiv.Memory.MainModule.Name}+{offset}";
+		}
 		return null;
 	}
 }

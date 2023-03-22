@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
+using HarmonyLib;
 using ReClassNET;
 using ReClassNET.Forms;
 using ReClassNET.Memory;
@@ -9,31 +11,27 @@ using ReClassNET.Nodes;
 using ReClassNET.Plugins;
 using ReClassNET.UI;
 using XivReClassPlugin.Data;
-using XivReClassPlugin.Forms;
+using XivReClassPlugin.Forms.Controls;
 using XivReClassPlugin.NodeReaders;
 using XivReClassPlugin.Nodes;
 using XivReClassPlugin.Resources;
-using Module = ReClassNET.Memory.Module;
 
 namespace XivReClassPlugin;
 
 public sealed class XivReClassPluginExt : Plugin {
+	private const string HarmonyId = "reclass.plugin.ffxiv";
 	private const string PluginName = "XivReClass";
-	
-	public XivPluginSettings Settings { get; private set; } = new();
-	public Module MainModule { get; private set; } = new();
-	public ClientStructsSymbols Symbols { get; private set; } = null!;
-	public DataManager Data { get; private set; } = null!;
+
+	public static IPluginHost Host { get; private set; } = null!;
+	public static Harmony Harmony { get; private set; } = null!;
 
 	public override bool Initialize(IPluginHost host) {
-		Settings = XivPluginSettings.Load();
+		Host = host;
 		GlobalWindowManager.WindowAdded += OnWindowAdded;
 		Program.RemoteProcess.ProcessAttached += OnProcessAttached;
 
-		Data = new DataManager(this);
-		Symbols = new ClientStructsSymbols(this);
-		
-		HarmonyPatches.Setup(this);
+		Harmony = new Harmony(HarmonyId);
+		Harmony.PatchAll(Assembly.GetExecutingAssembly());
 		SetupMenu(host);
 
 		return true;
@@ -42,42 +40,29 @@ public sealed class XivReClassPluginExt : Plugin {
 	public override void Terminate() {
 		GlobalWindowManager.WindowAdded -= OnWindowAdded;
 		Program.RemoteProcess.ProcessAttached -= OnProcessAttached;
-		Settings.Save();
-		HarmonyPatches.Remove();
+		Ffxiv.Settings.Save();
 
-		if (Settings.UseNamedAddresses)
+		Harmony.UnpatchAll(HarmonyId);
+
+		if (Ffxiv.Settings.UseNamedAddresses)
 			Program.RemoteProcess.NamedAddresses.Clear();
 	}
 
 	private void OnProcessAttached(RemoteProcess sender) {
-		Symbols.Clear();
 		sender.NamedAddresses.Clear();
-
-		sender.EnumerateRemoteSectionsAndModules(out _, out var modules);
-		MainModule = modules.Find(m => m.Name.Equals(sender.UnderlayingProcess.Name));
-
-		if (sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase))
-			Update();
-	}
-
-	public void Update() {
-		Data.Reload();
-		Symbols.Reload();
-
-		Program.RemoteProcess.NamedAddresses.Clear();
-		if (Settings.UseNamedAddresses) {
-			foreach (var kv in Symbols.NamedAddresses)
-				Program.RemoteProcess.NamedAddresses[kv.Key] = kv.Value;
+		if (sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase)) {
+			DataManager.Reload();
+			Ffxiv.Update();
 		}
 	}
 
 	private void SetupMenu(IPluginHost host) {
-		var menu = host.MainWindow.MainMenu.Items.OfType<ToolStripMenuItem>().FirstOrDefault(i => i.Text.Equals("Project"));
-		if (menu != null) {
-			var item = new ToolStripMenuItem("Generate ClientStructs Code", XivReClassResources.CSharpIcon);
-			item.Click += (_, _) => Program.MainForm.ShowCodeGeneratorForm(new CsCodeGenerator());
-			menu.DropDownItems.Add(item);
-		}
+		var mainMenu = host.MainWindow.MainMenu;
+		var xivMenu = new ToolStripMenuItem("Final Fantasy XIV");
+		mainMenu.Items.Add(xivMenu);
+		var generatorItem = new ToolStripMenuItem("Generate ClientStructs Code", XivReClassResources.CSharpIcon);
+		generatorItem.Click += (_, _) => Program.MainForm.ShowCodeGeneratorForm(new CsCodeGenerator());
+		xivMenu.DropDownItems.Add(generatorItem);
 	}
 
 	private void OnWindowAdded(object sender, GlobalWindowManagerEventArgs e) {
@@ -89,7 +74,7 @@ public sealed class XivReClassPluginExt : Plugin {
 					return;
 
 				var settingsTab = new TabPage(PluginName) { UseVisualStyleBackColor = true };
-				settingsTab.Controls.Add(new PluginSettingsTab(this) { Dock = DockStyle.Fill });
+				settingsTab.Controls.Add(new PluginSettingsTab { Dock = DockStyle.Fill });
 				settingsTabControl.TabPages.Add(settingsTab);
 			} catch (Exception ex) {
 				Program.ShowException(ex);
@@ -98,7 +83,7 @@ public sealed class XivReClassPluginExt : Plugin {
 	}
 
 	public override IReadOnlyList<INodeInfoReader> GetNodeInfoReaders() {
-		return new List<INodeInfoReader> { new XivClassNodeReader(this) };
+		return new List<INodeInfoReader> { new XivClassNodeReader() };
 	}
 
 	public override CustomNodeTypes GetCustomNodeTypes() {
