@@ -20,13 +20,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Iced" Version="1.18.0" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
     <PackageReference Include="Lib.Harmony" Version="2.2.2" />
+    <PackageReference Include="ObjectListView.Updated" Version="2.9.3" />
     <PackageReference Include="YamlDotNet" Version="13.0.2" />
     <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Update="Resources\XivReClassResources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -35,6 +42,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Update="Resources\XivReClassResources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XivReClassResources.Designer.cs</LastGenOutput>

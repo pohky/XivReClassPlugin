@@ -2,7 +2,7 @@
 using System.Linq;
 using XivReClassPlugin.Data;
 
-namespace XivReClassPlugin.Game; 
+namespace XivReClassPlugin.Game.Memory;
 
 public class Symbols {
 	public Dictionary<nint, string> NamedAddresses { get; } = new();
@@ -27,7 +27,7 @@ public class Symbols {
 	public bool TryGetInstance(string name, out nint address) {
 		return NamedInstances.TryGetValue(name, out address);
 	}
-	
+
 	public void Update() {
 		NamedAddresses.Clear();
 		NamedInstances.Clear();
@@ -70,9 +70,9 @@ public class Symbols {
 		}
 
 		Ffxiv.Memory.Process.NamedAddresses.Clear();
-		if (Ffxiv.Settings.UseNamedAddresses) {
-			foreach (var kv in NamedAddresses)
-				Ffxiv.Memory.Process.NamedAddresses[kv.Key] = kv.Value;
-		}
+		if (!Ffxiv.Settings.UseNamedAddresses)
+			return;
+		foreach (var kv in NamedAddresses)
+			Ffxiv.Memory.Process.NamedAddresses[kv.Key] = kv.Value;
 	}
 }

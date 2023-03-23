@@ -1,10 +1,10 @@
-﻿using ReClassNET.Memory;
+﻿using System;
+using System.Text;
 using ReClassNET;
 using ReClassNET.Extensions;
-using System.Text;
-using System;
+using ReClassNET.Memory;
 
-namespace XivReClassPlugin.Game; 
+namespace XivReClassPlugin.Game.Memory;
 
 public abstract unsafe class MemoryAccess {
 	public bool IsValid => Program.RemoteProcess.IsValid;
@@ -12,8 +12,9 @@ public abstract unsafe class MemoryAccess {
 
 	public T Read<T>(nint address) where T : unmanaged {
 		var data = Process.ReadRemoteMemory(address, sizeof(T));
-		fixed (byte* ptr = data)
+		fixed (byte* ptr = data) {
 			return *(T*)ptr;
+		}
 	}
 
 	public T[] Read<T>(nint address, int count) where T : unmanaged {
@@ -25,6 +26,7 @@ public abstract unsafe class MemoryAccess {
 			for (var i = 0; i < array.Length; i++)
 				array[i] = *(T*)(ptr + size * i);
 		}
+
 		return array;
 	}
 
@@ -38,8 +40,10 @@ public abstract unsafe class MemoryAccess {
 
 	public bool Write<T>(nint address, T value) where T : unmanaged {
 		var data = new byte[sizeof(T)];
-		fixed (byte* ptr = data)
+		fixed (byte* ptr = data) {
 			*(T*)ptr = value;
+		}
+
 		return Process.WriteRemoteMemory(address, data);
 	}
 
@@ -50,6 +54,7 @@ public abstract unsafe class MemoryAccess {
 			for (var i = 0; i < values.Length; i++)
 				*(T*)(ptr + size * i) = values[i];
 		}
+
 		return Process.WriteRemoteMemory(address, data);
 	}
 
