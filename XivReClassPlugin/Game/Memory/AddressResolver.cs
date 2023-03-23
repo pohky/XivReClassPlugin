@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace XivReClassPlugin.Game;
+namespace XivReClassPlugin.Game.Memory;
 
 public class AddressResolver {
 	public nint Framework { get; private set; }

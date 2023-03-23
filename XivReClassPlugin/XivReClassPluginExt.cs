@@ -11,6 +11,7 @@ using ReClassNET.Nodes;
 using ReClassNET.Plugins;
 using ReClassNET.UI;
 using XivReClassPlugin.Data;
+using XivReClassPlugin.Forms;
 using XivReClassPlugin.Forms.Controls;
 using XivReClassPlugin.NodeReaders;
 using XivReClassPlugin.Nodes;
@@ -58,11 +59,20 @@ public sealed class XivReClassPluginExt : Plugin {
 
 	private void SetupMenu(IPluginHost host) {
 		var mainMenu = host.MainWindow.MainMenu;
-		var xivMenu = new ToolStripMenuItem("Final Fantasy XIV");
+		var projectMenu = mainMenu.Items.Cast<ToolStripMenuItem>().FirstOrDefault(m => m.Text.Equals("Project"));
+		var xivMenu = new ToolStripMenuItem("FFXIV");
 		mainMenu.Items.Add(xivMenu);
+		
 		var generatorItem = new ToolStripMenuItem("Generate ClientStructs Code", XivReClassResources.CSharpIcon);
 		generatorItem.Click += (_, _) => Program.MainForm.ShowCodeGeneratorForm(new CsCodeGenerator());
-		xivMenu.DropDownItems.Add(generatorItem);
+		if (projectMenu == null) {
+			xivMenu.DropDownItems.Add(generatorItem);
+			xivMenu.DropDownItems.Add(new ToolStripSeparator());
+		} else projectMenu.DropDownItems.Add(generatorItem);
+
+		var agentsItem = new ToolStripMenuItem("Agents");
+		agentsItem.Click += (_, _) => new AgentModuleForm().Show(host.MainWindow);
+		xivMenu.DropDownItems.Add(agentsItem);
 	}
 
 	private void OnWindowAdded(object sender, GlobalWindowManagerEventArgs e) {

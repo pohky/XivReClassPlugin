@@ -1,6 +1,7 @@
 ﻿using XivReClassPlugin.Game;
+using XivReClassPlugin.Game.Memory;
 
-namespace XivReClassPlugin; 
+namespace XivReClassPlugin;
 
 public static class Ffxiv {
 	public static XivPluginSettings Settings { get; }
@@ -19,5 +20,7 @@ public static class Ffxiv {
 		Memory.Update();
 		Symbols.Update();
 		Address.Update();
+
+		AgentModule.Update();
 	}
 }
