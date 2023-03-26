@@ -91,6 +91,7 @@
 			// ListUpdateTimer
 			// 
 			this.ListUpdateTimer.Enabled = true;
+			this.ListUpdateTimer.Interval = 250;
 			this.ListUpdateTimer.Tick += new System.EventHandler(this.ListUpdateTimer_Tick);
 			// 
 			// ContextMenuMain
