@@ -5,8 +5,8 @@ using XivReClassPlugin.Game;
 
 namespace XivReClassPlugin.Forms; 
 
-public partial class AgentModuleForm : IconForm {
-	public AgentModuleForm() {
+public partial class AgentListForm : IconForm {
+	public AgentListForm() {
 		InitializeComponent();
 
 		ListViewAgents.ModelFilter = new ModelFilter(AgentFilter);

@@ -71,7 +71,7 @@ public sealed class XivReClassPluginExt : Plugin {
 		} else projectMenu.DropDownItems.Add(generatorItem);
 
 		var agentsItem = new ToolStripMenuItem("Agents");
-		agentsItem.Click += (_, _) => new AgentModuleForm().Show(host.MainWindow);
+		agentsItem.Click += (_, _) => new AgentListForm().Show(host.MainWindow);
 		xivMenu.DropDownItems.Add(agentsItem);
 	}
 

@@ -54,7 +54,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 		if (!string.IsNullOrWhiteSpace(Name)) {
 			if (AgentModule.AgentList.Count(a => a.Name.Equals(Name)) == 1) {
 				node.AddressFormula = $"<Agent({Name})>";
-				node.Name = $"Agent({Name})";
+				node.Name = Name;
 			}
 		}
 		node.AddBytes(Math.Max(0x28, Size));

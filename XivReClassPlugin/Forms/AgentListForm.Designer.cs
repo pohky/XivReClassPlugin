@@ -1,5 +1,5 @@
 ﻿namespace XivReClassPlugin.Forms {
-	partial class AgentModuleForm {
+	partial class AgentListForm {
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
