@@ -1,17 +1,15 @@
 ﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
-using ReClassNET;
-using ReClassNET.Nodes;
+using ReClassNET.Forms;
 using XivReClassPlugin.Game;
 
 namespace XivReClassPlugin.Forms; 
 
-public partial class AgentModuleForm : Form {
+public partial class AgentModuleForm : IconForm {
 	public AgentModuleForm() {
 		InitializeComponent();
 
 		ListViewAgents.ModelFilter = new ModelFilter(AgentFilter);
-		ListViewAgents.UseFiltering = true;
 		ListViewAgents.ContextMenuStrip = ContextMenuMain;
 
 		InitList();
@@ -34,25 +32,21 @@ public partial class AgentModuleForm : Form {
 	}
 
 	private void InitList() {
+		ListViewAgents.ClearObjects();
 		if (AgentModule.AgentList.Count == 0)
 			return;
-		ListViewAgents.BeginUpdate();
-		ListViewAgents.ClearObjects();
 		ListViewAgents.AddObjects(AgentModule.AgentList);
-		ListViewAgents.AutoResizeColumns(AgentModule.AgentList.Count == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
-		ListViewAgents.EndUpdate();
+		ListViewAgents.AutoResizeColumns(ListViewAgents.GetItemCount() == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
 	}
 
 	private void UpdateList() {
-		ListViewAgents.BeginUpdate();
 		ListViewAgents.UpdateObjects(AgentModule.AgentList);
-		ListViewAgents.AutoResizeColumns(ListViewAgents.GetItemCount() == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
-		ListViewAgents.EndUpdate();
 	}
 
 	private void ListUpdateTimer_Tick(object sender, System.EventArgs e) {
 		if (ListViewAgents.GetItemCount() == 0 || AgentModule.AgentList.Count == 0)
 			InitList();
+		AtkUnitManager.Update();
 		UpdateList();
 	}
 
@@ -70,21 +64,17 @@ public partial class AgentModuleForm : Form {
 	}
 
 	private void CreateClassMenuItem_Click(object sender, System.EventArgs e) {
-		ClassNode? firstNode = null;
 		foreach (var obj in ListViewAgents.SelectedObjects) {
-			if (obj is not AgentInterface agent) continue;
-			var newNode = agent.CreateClassNode();
-			firstNode ??= newNode;
+			if (obj is AgentInterface agent)
+				agent.CreateClassNode();
 		}
-
-		if (firstNode != null)
-			Program.MainForm.CurrentClassNode = firstNode;
 	}
 
 	private void CopyOffsetMenuItem_Click(object sender, System.EventArgs e) {
-		if (ListViewAgents.SelectedObjects.Count >= 1) {
-			if (ListViewAgents.SelectedObjects[0] is AgentInterface agent)
-				Clipboard.SetText($"{agent.VTableOffset:X}");
-		}
+		var selectedObjects = ListViewAgents.SelectedObjects;
+		if (selectedObjects.Count < 1)
+			return;
+		if (selectedObjects[0] is AgentInterface agent)
+			Clipboard.SetText($"{agent.VTableOffset:X}");
 	}
 }

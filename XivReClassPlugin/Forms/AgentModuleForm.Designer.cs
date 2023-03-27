@@ -34,7 +34,7 @@
 			this.CopyOffsetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.ListViewAgents = new BrightIdeasSoftware.FastObjectListView();
 			this.ColumnAgentId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-			this.ColumnAddonId = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+			this.ColumnAddon = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this.ColumnAddress = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this.ColumnAgentSize = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
 			this.ColumnVtable = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -91,6 +91,7 @@
 			// ListUpdateTimer
 			// 
 			this.ListUpdateTimer.Enabled = true;
+			this.ListUpdateTimer.Interval = 250;
 			this.ListUpdateTimer.Tick += new System.EventHandler(this.ListUpdateTimer_Tick);
 			// 
 			// ContextMenuMain
@@ -118,7 +119,7 @@
 			// ListViewAgents
 			// 
 			this.ListViewAgents.AllColumns.Add(this.ColumnAgentId);
-			this.ListViewAgents.AllColumns.Add(this.ColumnAddonId);
+			this.ListViewAgents.AllColumns.Add(this.ColumnAddon);
 			this.ListViewAgents.AllColumns.Add(this.ColumnAddress);
 			this.ListViewAgents.AllColumns.Add(this.ColumnAgentSize);
 			this.ListViewAgents.AllColumns.Add(this.ColumnVtable);
@@ -126,7 +127,7 @@
 			this.ListViewAgents.CellEditUseWholeCell = false;
 			this.ListViewAgents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ColumnAgentId,
-            this.ColumnAddonId,
+            this.ColumnAddon,
             this.ColumnAddress,
             this.ColumnAgentSize,
             this.ColumnVtable,
@@ -143,6 +144,7 @@
 			this.ListViewAgents.Size = new System.Drawing.Size(800, 421);
 			this.ListViewAgents.TabIndex = 5;
 			this.ListViewAgents.UseCompatibleStateImageBehavior = false;
+			this.ListViewAgents.UseFiltering = true;
 			this.ListViewAgents.View = System.Windows.Forms.View.Details;
 			this.ListViewAgents.VirtualMode = true;
 			// 
@@ -154,18 +156,20 @@
 			this.ColumnAgentId.Text = "ID";
 			this.ColumnAgentId.Width = 40;
 			// 
-			// ColumnAddonId
+			// ColumnAddon
 			// 
-			this.ColumnAddonId.AspectName = "AddonId";
-			this.ColumnAddonId.MinimumWidth = 60;
-			this.ColumnAddonId.Text = "Addon";
+			this.ColumnAddon.AspectName = "AddonName";
+			this.ColumnAddon.MinimumWidth = 100;
+			this.ColumnAddon.Text = "Addon";
+			this.ColumnAddon.Width = 100;
 			// 
 			// ColumnAddress
 			// 
 			this.ColumnAddress.AspectName = "Address";
 			this.ColumnAddress.AspectToStringFormat = "{0:X}";
-			this.ColumnAddress.MinimumWidth = 60;
+			this.ColumnAddress.MinimumWidth = 100;
 			this.ColumnAddress.Text = "Address";
+			this.ColumnAddress.Width = 100;
 			// 
 			// ColumnAgentSize
 			// 
@@ -173,6 +177,7 @@
 			this.ColumnAgentSize.AspectToStringFormat = "{0:X}";
 			this.ColumnAgentSize.MinimumWidth = 50;
 			this.ColumnAgentSize.Text = "Size";
+			this.ColumnAgentSize.Width = 50;
 			// 
 			// ColumnVtable
 			// 
@@ -184,8 +189,9 @@
 			// ColumnClassName
 			// 
 			this.ColumnClassName.AspectName = "ClassName";
-			this.ColumnClassName.MinimumWidth = 60;
+			this.ColumnClassName.MinimumWidth = 200;
 			this.ColumnClassName.Text = "Class";
+			this.ColumnClassName.Width = 200;
 			// 
 			// AgentModuleForm
 			// 
@@ -217,7 +223,7 @@
 		private System.Windows.Forms.ToolStripMenuItem CopyOffsetMenuItem;
 		private BrightIdeasSoftware.FastObjectListView ListViewAgents;
 		private BrightIdeasSoftware.OLVColumn ColumnAgentId;
-		private BrightIdeasSoftware.OLVColumn ColumnAddonId;
+		private BrightIdeasSoftware.OLVColumn ColumnAddon;
 		private BrightIdeasSoftware.OLVColumn ColumnAddress;
 		private BrightIdeasSoftware.OLVColumn ColumnAgentSize;
 		private BrightIdeasSoftware.OLVColumn ColumnVtable;
