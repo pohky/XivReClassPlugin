@@ -10,7 +10,6 @@ public partial class AgentModuleForm : IconForm {
 		InitializeComponent();
 
 		ListViewAgents.ModelFilter = new ModelFilter(AgentFilter);
-		ListViewAgents.UseFiltering = true;
 		ListViewAgents.ContextMenuStrip = ContextMenuMain;
 
 		InitList();
@@ -37,18 +36,17 @@ public partial class AgentModuleForm : IconForm {
 		if (AgentModule.AgentList.Count == 0)
 			return;
 		ListViewAgents.AddObjects(AgentModule.AgentList);
-		ListViewAgents.AutoResizeColumns(AgentModule.AgentList.Count == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
+		ListViewAgents.AutoResizeColumns(ListViewAgents.GetItemCount() == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
 	}
 
 	private void UpdateList() {
 		ListViewAgents.UpdateObjects(AgentModule.AgentList);
-		//ListViewAgents.RefreshObjects(AgentModule.AgentList);
-		ListViewAgents.AutoResizeColumns(ListViewAgents.GetItemCount() == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
 	}
 
 	private void ListUpdateTimer_Tick(object sender, System.EventArgs e) {
 		if (ListViewAgents.GetItemCount() == 0 || AgentModule.AgentList.Count == 0)
 			InitList();
+		AtkUnitManager.Update();
 		UpdateList();
 	}
 

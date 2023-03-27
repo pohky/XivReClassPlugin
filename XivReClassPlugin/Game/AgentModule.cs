@@ -33,6 +33,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 	public int Size { get; }
 
 	public uint AddonId => Ffxiv.Memory.Read<uint>((nint)(Address + 0x20));
+	public string AddonName => AtkUnitManager.TryGetAddonById(AddonId, out var addon) ? addon.Name : string.Empty;
 
 	public AgentInterface(int id, nint address) {
 		AgentId = id;
@@ -49,8 +50,14 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 			return null;
 		var node = ClassNode.Create();
 		node.AddressFormula = $"<Agent({AgentId})>";
+		node.Name = $"Agent{AgentId}";
+		if (!string.IsNullOrWhiteSpace(Name)) {
+			if (AgentModule.AgentList.Count(a => a.Name.Equals(Name)) == 1) {
+				node.AddressFormula = $"<Agent({Name})>";
+				node.Name = $"Agent({Name})";
+			}
+		}
 		node.AddBytes(Math.Max(0x28, Size));
-		node.Name = string.IsNullOrWhiteSpace(Name) ? $"Agent{AgentId}" : Name;
 		return node;
 	}
 

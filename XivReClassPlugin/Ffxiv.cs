@@ -21,6 +21,7 @@ public static class Ffxiv {
 		Symbols.Update();
 		Address.Update();
 
+		AtkUnitManager.Update();
 		AgentModule.Update();
 	}
 }
