@@ -1,6 +1,8 @@
 ﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
+using ReClassNET;
 using ReClassNET.Forms;
+using ReClassNET.Nodes;
 using XivReClassPlugin.Game;
 
 namespace XivReClassPlugin.Forms; 
@@ -64,10 +66,13 @@ public partial class AgentListForm : IconForm {
 	}
 
 	private void CreateClassMenuItem_Click(object sender, System.EventArgs e) {
+		ClassNode? node = null;
 		foreach (var obj in ListViewAgents.SelectedObjects) {
 			if (obj is AgentInterface agent)
-				agent.CreateClassNode();
+				node = agent.CreateClassNode();
 		}
+		if (node != null)
+			Program.MainForm.CurrentClassNode = node;
 	}
 
 	private void CopyOffsetMenuItem_Click(object sender, System.EventArgs e) {

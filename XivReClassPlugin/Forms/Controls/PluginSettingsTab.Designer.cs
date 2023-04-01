@@ -29,6 +29,7 @@ namespace XivReClassPlugin.Forms.Controls
         /// </summary>
         private void InitializeComponent()
         {
+			this.components = new System.ComponentModel.Container();
 			this.DataFileDialog = new System.Windows.Forms.OpenFileDialog();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.OpenDataButton = new System.Windows.Forms.Button();
@@ -43,6 +44,7 @@ namespace XivReClassPlugin.Forms.Controls
 			this.CheckBoxInheritance = new System.Windows.Forms.CheckBox();
 			this.RadioButtonRtti = new System.Windows.Forms.RadioButton();
 			this.RadioButtonNamedAddress = new System.Windows.Forms.RadioButton();
+			this.ConfigToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.mainTableLayoutPanel.SuspendLayout();
 			this.GroupBoxClassNames.SuspendLayout();
@@ -252,5 +254,6 @@ namespace XivReClassPlugin.Forms.Controls
         private System.Windows.Forms.RadioButton RadioButtonRtti;
         private System.Windows.Forms.RadioButton RadioButtonNamedAddress;
         private System.Windows.Forms.CheckBox CheckBoxNamespacePointer;
-    }
+		private System.Windows.Forms.ToolTip ConfigToolTip;
+	}
 }

@@ -27,6 +27,8 @@ public partial class PluginSettingsTab : UserControl {
 
 		CheckBoxInheritance.Checked = Ffxiv.Settings.ShowInheritance;
 		CheckBoxInheritance.CheckedChanged += CheckBoxInheritance_CheckedChanged;
+
+		ConfigToolTip.SetToolTip(CheckBoxShowOffset, "This also attempts to get the Size of the Class\nif it finds a possible VFTable");
 	}
 
 	private void OpenDataButton_Click(object sender, EventArgs e) {

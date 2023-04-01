@@ -18,10 +18,25 @@ public class XivClassNodeReader : INodeInfoReader {
 			return $"-> {className}";
 
 		if (Ffxiv.Settings.FallbackModuleOffset && !Ffxiv.Symbols.NamedAddresses.ContainsKey(nodeValue)) {
+			var classSize = 0;
+			if (MightBeClass(nodeAddress))
+				classSize = Ffxiv.Memory.TryGetSizeFromDtor(Ffxiv.Memory.Read<nint>(nodeValue));
+
 			var offset = Ffxiv.Memory.GetMainModuleOffset(nodeValue);
 			if (offset != 0)
-				return $"{Ffxiv.Memory.MainModule.Name}+{offset}";
+				return $"{Ffxiv.Memory.MainModule.Name}+{offset.ToString("X")}" + (classSize == 0 ? string.Empty : $" (Size: 0x{classSize:X})");
 		}
 		return null;
+	}
+
+	private bool MightBeClass(nint address) {
+		if (address == 0) return false;
+		var vtable = Ffxiv.Memory.Read<nint>(address);
+		if (vtable == 0 || Program.RemoteProcess.GetSectionToPointer(vtable) is not { Name: ".rdata" })
+			return false;
+		var vf0 = Ffxiv.Memory.Read<nint>(vtable);
+		if (vf0 == 0 || Program.RemoteProcess.GetSectionToPointer(vf0) is not { Name: ".text" })
+			return false;
+		return true;
 	}
 }
