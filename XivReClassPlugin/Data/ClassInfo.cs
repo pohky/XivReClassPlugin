@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -21,6 +22,8 @@ public class ClassInfo {
 	public Dictionary<ulong, string> Instances { get; } = new();
         
 	public ClassInfo(ClientStructsData data, string rawName, XivClass? xivClass, XivVTable? baseClass) {
+		if (string.IsNullOrWhiteSpace(rawName))
+			rawName = string.Empty;
 		Name = NameRegex.Replace(rawName, string.Empty);
 		var nsSplit = NamespaceSplitRegex.Split(rawName);
 		if (nsSplit.Length > 1) {
@@ -36,12 +39,26 @@ public class ClassInfo {
 		var baseVtable = baseClass ?? xivClass.VirtualTables?.FirstOrDefault();
 
 		Offset = baseVtable?.Address ?? 0;
-		
-		foreach (var func in xivClass.Functions)
-			Functions[func.Key] = $"{FullName}.{func.Value}";
 
-		foreach (var vf in xivClass.VirtualFunctions)
-			VirtualFunctions[vf.Key] = vf.Value;
+		try {
+			foreach (var func in xivClass.Functions) {
+				if (func.Key == 0 || string.IsNullOrWhiteSpace(func.Value))
+					continue;
+				Functions[func.Key] = $"{FullName}.{func.Value}";
+			}
+		} catch (NullReferenceException) {
+			/* ignored, can happen with incomplete defs after patch */
+		}
+
+		try {
+			foreach (var vf in xivClass.VirtualFunctions) {
+				if (string.IsNullOrWhiteSpace(vf.Value))
+					continue;
+				VirtualFunctions[vf.Key] = vf.Value;
+			}
+		} catch (NullReferenceException) {
+			/* ignored, can happen with incomplete defs after patch */
+		}
 
 		var parentName = baseVtable?.Base;
 		if (!string.IsNullOrEmpty(parentName) && data.Classes.TryGetValue(parentName!, out var parentClass)) {

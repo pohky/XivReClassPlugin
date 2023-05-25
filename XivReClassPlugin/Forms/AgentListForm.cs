@@ -82,4 +82,20 @@ public partial class AgentListForm : IconForm {
 		if (selectedObjects[0] is AgentInterface agent)
 			Clipboard.SetText($"{agent.VTableOffset:X}");
 	}
+
+	private void ShowAgentMenuItem_Click(object sender, System.EventArgs e) {
+		var selectedObjects = ListViewAgents.SelectedObjects;
+		if (selectedObjects.Count < 1)
+			return;
+		if (selectedObjects[0] is AgentInterface agent)
+			agent.Show();
+	}
+
+	private void HideAgentMenuItem_Click(object sender, System.EventArgs e) {
+		var selectedObjects = ListViewAgents.SelectedObjects;
+		if (selectedObjects.Count < 1)
+			return;
+		if (selectedObjects[0] is AgentInterface agent)
+			agent.Hide();
+	}
 }
