@@ -9,6 +9,7 @@ public class AddressResolver {
 	public nint AgentModule { get; private set; }
 	public nint AtkStage { get; private set; }
 	public nint AtkUnitManager { get; private set; }
+	public nint EventFramework { get; private set; }
 
 	public void Update() {
 		Framework = GetFramework();
@@ -17,6 +18,14 @@ public class AddressResolver {
 		
 		AtkStage = GetAtkStage();
 		AtkUnitManager = GetAtkUnitManager(AtkStage);
+
+		EventFramework = GetEventFramework();
+	}
+
+	private nint GetEventFramework() {
+		if (!Ffxiv.Symbols.TryGetInstance("Client::Game::Event::EventFramework_Instance", out var efwPointer))
+			return 0;
+		return Ffxiv.Memory.Read<nint>(efwPointer);
 	}
 
 	private nint GetFramework() {

@@ -20,6 +20,13 @@ public class ModuleNamePatch {
 			return false;
 		}
 
+		if (name.Equals("InstanceContentDirector", StringComparison.OrdinalIgnoreCase)) {
+			if (EventFramework.DirectorModule.ActiveContentDirector != 0) {
+				__result = new Module { Start = EventFramework.DirectorModule.ActiveContentDirector, Name = name };
+				return false;
+			}
+		}
+
 		var match = AgentIdRegex.Match(name);
 		if (match.Success && Ffxiv.Address.AgentModule != 0) {
 			if (!int.TryParse(match.Groups["AgentId"].Value, out var agentId))

@@ -1,6 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using System.Threading;
-using ReClassNET.Native;
 using XivReClassPlugin.Game;
 using XivReClassPlugin.Game.Memory;
 
@@ -26,6 +24,7 @@ public static class Ffxiv {
 
 		AtkUnitManager.Update();
 		AgentModule.Update();
+		EventFramework.Update();
 	}
 	
 	public static void CreateRemoteThread(nint address, nint arg = 0) {
