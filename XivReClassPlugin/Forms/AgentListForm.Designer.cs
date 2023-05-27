@@ -42,6 +42,7 @@
 			this.ColumnHeaderSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.ColumnHeaderVTable = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.ColumnHeaderClass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.CopyAddressMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.FlowPanelToolBar.SuspendLayout();
 			this.ContextMenuMain.SuspendLayout();
 			this.SuspendLayout();
@@ -106,42 +107,43 @@
 			this.ContextMenuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CreateClassMenuItem,
             this.CopyOffsetMenuItem,
+            this.CopyAddressMenuItem,
             this.toolStripSeparator1,
             this.ShowAgentMenuItem,
             this.HideAgentMenuItem});
 			this.ContextMenuMain.Name = "ContextMenuMain";
-			this.ContextMenuMain.Size = new System.Drawing.Size(205, 106);
+			this.ContextMenuMain.Size = new System.Drawing.Size(218, 130);
 			// 
 			// CreateClassMenuItem
 			// 
 			this.CreateClassMenuItem.Name = "CreateClassMenuItem";
-			this.CreateClassMenuItem.Size = new System.Drawing.Size(204, 24);
+			this.CreateClassMenuItem.Size = new System.Drawing.Size(217, 24);
 			this.CreateClassMenuItem.Text = "Create Class";
 			this.CreateClassMenuItem.Click += new System.EventHandler(this.CreateClassMenuItem_Click);
 			// 
 			// CopyOffsetMenuItem
 			// 
 			this.CopyOffsetMenuItem.Name = "CopyOffsetMenuItem";
-			this.CopyOffsetMenuItem.Size = new System.Drawing.Size(204, 24);
+			this.CopyOffsetMenuItem.Size = new System.Drawing.Size(217, 24);
 			this.CopyOffsetMenuItem.Text = "Copy VTable Offset";
 			this.CopyOffsetMenuItem.Click += new System.EventHandler(this.CopyOffsetMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(201, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(214, 6);
 			// 
 			// ShowAgentMenuItem
 			// 
 			this.ShowAgentMenuItem.Name = "ShowAgentMenuItem";
-			this.ShowAgentMenuItem.Size = new System.Drawing.Size(204, 24);
+			this.ShowAgentMenuItem.Size = new System.Drawing.Size(217, 24);
 			this.ShowAgentMenuItem.Text = "Show Agent";
 			this.ShowAgentMenuItem.Click += new System.EventHandler(this.ShowAgentMenuItem_Click);
 			// 
 			// HideAgentMenuItem
 			// 
 			this.HideAgentMenuItem.Name = "HideAgentMenuItem";
-			this.HideAgentMenuItem.Size = new System.Drawing.Size(204, 24);
+			this.HideAgentMenuItem.Size = new System.Drawing.Size(217, 24);
 			this.HideAgentMenuItem.Text = "Hide Agent";
 			this.HideAgentMenuItem.Click += new System.EventHandler(this.HideAgentMenuItem_Click);
 			// 
@@ -180,21 +182,29 @@
 			// ColumnHeaderAddress
 			// 
 			this.ColumnHeaderAddress.Text = "Address";
-			this.ColumnHeaderAddress.Width = 120;
+			this.ColumnHeaderAddress.Width = 130;
 			// 
 			// ColumnHeaderSize
 			// 
 			this.ColumnHeaderSize.Text = "Size";
+			this.ColumnHeaderSize.Width = 80;
 			// 
 			// ColumnHeaderVTable
 			// 
 			this.ColumnHeaderVTable.Text = "VTable";
-			this.ColumnHeaderVTable.Width = 120;
+			this.ColumnHeaderVTable.Width = 130;
 			// 
 			// ColumnHeaderClass
 			// 
 			this.ColumnHeaderClass.Text = "Class";
 			this.ColumnHeaderClass.Width = 300;
+			// 
+			// CopyAddressMenuItem
+			// 
+			this.CopyAddressMenuItem.Name = "CopyAddressMenuItem";
+			this.CopyAddressMenuItem.Size = new System.Drawing.Size(217, 24);
+			this.CopyAddressMenuItem.Text = "Copy VTable Address";
+			this.CopyAddressMenuItem.Click += new System.EventHandler(this.CopyAddressMenuItem_Click);
 			// 
 			// AgentListForm
 			// 
@@ -234,5 +244,6 @@
 		private System.Windows.Forms.ColumnHeader ColumnHeaderSize;
 		private System.Windows.Forms.ColumnHeader ColumnHeaderVTable;
 		private System.Windows.Forms.ColumnHeader ColumnHeaderClass;
+		private System.Windows.Forms.ToolStripMenuItem CopyAddressMenuItem;
 	}
 }

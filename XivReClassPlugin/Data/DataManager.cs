@@ -11,7 +11,7 @@ using YamlDotNet.Serialization;
 namespace XivReClassPlugin.Data;
 
 public static class DataManager {
-	private const ulong DataBaseAddress = 0x1_4000_0000;
+	public const ulong DataBaseAddress = 0x1_4000_0000;
 	public static ClientStructsData Data { get; private set; } = new();
 
 	public static List<ClassInfo> Classes { get; } = new();

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ReClassNET;
 using ReClassNET.Forms;
 using ReClassNET.Nodes;
+using XivReClassPlugin.Data;
 using XivReClassPlugin.Game;
 
 namespace XivReClassPlugin.Forms; 
@@ -53,7 +54,7 @@ public partial class AgentListForm : IconForm {
 			m_AgentList.Add((agent, item));
 		}
 		UpdateList();
-		ListViewAgents.AutoResizeColumns(ListViewAgents.VirtualListSize == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
+		//ListViewAgents.AutoResizeColumns(ListViewAgents.VirtualListSize == 0 ? ColumnHeaderAutoResizeStyle.HeaderSize : ColumnHeaderAutoResizeStyle.ColumnContent);
 	}
 
 	private void UpdateList() {
@@ -124,6 +125,14 @@ public partial class AgentListForm : IconForm {
 		if (idx >= m_DisplayList.Count || idx < 0) return;
 		var entry = m_DisplayList[idx];
 		Clipboard.SetText($"{entry.Agent.VTableOffset:X}");
+	}
+
+	private void CopyAddressMenuItem_Click(object sender, System.EventArgs e) {
+		if (ListViewAgents.SelectedIndices.Count == 0) return;
+		var idx = ListViewAgents.SelectedIndices[0];
+		if (idx >= m_DisplayList.Count || idx < 0) return;
+		var entry = m_DisplayList[idx];
+		Clipboard.SetText($"0x{entry.Agent.VTableOffset + DataManager.DataBaseAddress:X}");
 	}
 
 	private void ShowAgentMenuItem_Click(object sender, System.EventArgs e) {
