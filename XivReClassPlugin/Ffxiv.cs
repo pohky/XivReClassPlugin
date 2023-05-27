@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using XivReClassPlugin.Data;
 using XivReClassPlugin.Game;
 using XivReClassPlugin.Game.Memory;
 
@@ -15,6 +16,11 @@ public static class Ffxiv {
 		Symbols = new Symbols();
 		Memory = new Memory();
 		Address = new AddressResolver();
+	}
+
+	public static void Reload() {
+		DataManager.Reload();
+		Update();
 	}
 
 	public static void Update() {
