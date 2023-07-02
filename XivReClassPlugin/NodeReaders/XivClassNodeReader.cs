@@ -2,6 +2,7 @@
 using ReClassNET.Extensions;
 using ReClassNET.Memory;
 using ReClassNET.Nodes;
+using XivReClassPlugin.Game;
 
 namespace XivReClassPlugin.NodeReaders;
 
@@ -14,8 +15,15 @@ public class XivClassNodeReader : INodeInfoReader {
 			return null;
 
 		var ptr = reader.ReadRemoteIntPtr(nodeValue);
-		if (ptr.MayBeValid() && Ffxiv.Symbols.TryGetClassName(ptr, out var className, Ffxiv.Settings.ShowNamespacesOnPointer))
+		if (ptr.MayBeValid() && Ffxiv.Symbols.TryGetClassName(ptr, out var className, Ffxiv.Settings.ShowNamespacesOnPointer)) {
+			if (className.EndsWith("ExcelSheet")) {
+				var sheet = new ExcelSheet(nodeValue);
+				var sheetName = sheet.Name;
+				if (!string.IsNullOrWhiteSpace(sheetName))
+					return $"-> ExcelSheet ({sheetName})";
+			}
 			return $"-> {className}";
+		}
 
 		if (Ffxiv.Settings.FallbackModuleOffset && !Ffxiv.Symbols.NamedAddresses.ContainsKey(nodeValue)) {
 			var classSize = 0;
@@ -29,7 +37,7 @@ public class XivClassNodeReader : INodeInfoReader {
 		return null;
 	}
 
-	private bool MightBeClass(nint address) {
+	private static bool MightBeClass(nint address) {
 		if (address == 0) return false;
 		var vtable = Ffxiv.Memory.Read<nint>(address);
 		if (vtable == 0 || Program.RemoteProcess.GetSectionToPointer(vtable) is not { Name: ".rdata" })
