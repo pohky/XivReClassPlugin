@@ -9,7 +9,7 @@ namespace XivReClassPlugin.Game;
 public static unsafe class AtkUnitManager {
 	public static List<Addon> Addons { get; } = new(100);
 
-	public static bool TryGetAddonByName(string name, out Addon? addon) {
+	public static bool TryGetAddonByName(string name, out Addon addon) {
 		var value = Addons.FirstOrDefault(a => a.Name.Equals(name));
 		addon = value ?? null!;
 		return value != null;
