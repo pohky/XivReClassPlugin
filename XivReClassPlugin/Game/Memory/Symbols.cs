@@ -32,13 +32,15 @@ public class Symbols {
 		NamedAddresses.Clear();
 		NamedInstances.Clear();
 
-		var pureCall = (nint)DataManager.Data.Functions.FirstOrDefault(kv => kv.Value.Equals("_purecall")).Key;
-		if (pureCall != 0) {
-			pureCall = Ffxiv.Memory.MainModule.Start + pureCall;
-			NamedAddresses[pureCall] = "_purecall";
-		}
+        nint pureCall = 0;
+        foreach (var func in DataManager.Data.Functions) {
+            var addr = Ffxiv.Memory.MainModule.Start + (nint)func.Key;
+			NamedAddresses[addr] = func.Value;
+            if (func.Value.Equals("_purecall"))
+                pureCall = addr;
+        }
 
-		foreach (var info in DataManager.Classes) {
+        foreach (var info in DataManager.Classes) {
 			var className = Ffxiv.Settings.ShowInheritance ? info.GetInheritanceName(Ffxiv.Settings.ShowNamespaces) : Ffxiv.Settings.ShowNamespaces ? info.FullName : info.Name;
 			var classAddress = Ffxiv.Memory.MainModule.Start + (nint)info.Offset;
 

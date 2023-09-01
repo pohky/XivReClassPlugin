@@ -31,6 +31,8 @@ public partial class AgentListForm : IconForm {
 				return true;
 			if (agent.Address.ToString("X").Contains(text))
 				return true;
+			if (agent.VTableOffset.ToString("X").Contains(text))
+				return true;
 			return false;
 		}
 		if (CheckBoxHideInactive.Checked)

@@ -52,8 +52,7 @@ public sealed class XivReClassPluginExt : Plugin {
 	private void OnProcessAttached(RemoteProcess sender) {
 		sender.NamedAddresses.Clear();
 		if (sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase)) {
-			DataManager.Reload();
-			Ffxiv.Update();
+			Ffxiv.Reload();
 		}
 	}
 

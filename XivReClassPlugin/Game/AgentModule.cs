@@ -45,7 +45,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 		VTableOffset = (ulong)Ffxiv.Memory.GetMainModuleOffset(vtable);
 		ClassName = Ffxiv.Symbols.TryGetClassName(vtable, out var className, true) ? className : string.Empty;
 		Name = Ffxiv.Symbols.TryGetClassName(vtable, out var name) ? name : string.Empty;
-		Size = Ffxiv.Memory.TryGetSizeFromDtor(Ffxiv.Memory.Read<nint>(vtable + 2 * 8));
+		Size = Ffxiv.Memory.TryGetSizeFromFunction(Ffxiv.Memory.Read<nint>(vtable + 2 * 8));
 		m_ShowAddress = Ffxiv.Memory.Read<nint>(vtable + 3 * 8);
 		m_HideAddress = Ffxiv.Memory.Read<nint>(vtable + 4 * 8);
 	}
