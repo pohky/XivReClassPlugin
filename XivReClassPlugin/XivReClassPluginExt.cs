@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using HarmonyLib;
 using ReClassNET;
+using ReClassNET.Controls;
 using ReClassNET.Forms;
 using ReClassNET.Memory;
 using ReClassNET.Nodes;
@@ -52,10 +53,37 @@ public sealed class XivReClassPluginExt : Plugin {
 		sender.NamedAddresses.Clear();
 		if (sender.UnderlayingProcess.Name.Equals("ffxiv_dx11.exe", StringComparison.OrdinalIgnoreCase)) {
 			Ffxiv.Reload();
-		}
+            //TODO TryFixToolButtons();
+        }
 	}
 
-	private void SetupMenu(IPluginHost host) {
+    private static void TryFixToolButtons() {
+        if (Program.MainForm.Controls.Find("toolStrip", true).FirstOrDefault() is not ToolStrip toolStrip || toolStrip.Items.Count < 1)
+            return;
+        if (toolStrip.Items[toolStrip.Items.Count - 1] is not ToolStripDropDownButton dropDown)
+            return;
+
+        var clickHandler = new EventHandler((sender, _) => Program.MainForm.ReplaceSelectedNodesWithType(((TypeToolStripButton)sender).Value));
+        
+        var idx = toolStrip.Items.IndexOf(dropDown);
+        if (idx != -1)
+            dropDown.Visible = false;
+
+		foreach (TypeToolStripMenuItem item in dropDown.DropDownItems) {
+            var btn = new TypeToolStripButton {
+                Value = item.Value,
+                Image = item.Image,
+                ToolTipText = item.Text,
+            };
+            btn.Click += clickHandler;
+            if (idx != -1)
+                toolStrip.Items.Insert(idx++, btn);
+            else
+                toolStrip.Items.Add(btn);
+        }
+    }
+
+	private static void SetupMenu(IPluginHost host) {
 		var mainMenu = host.MainWindow.MainMenu;
 		var projectMenu = mainMenu.Items.Cast<ToolStripMenuItem>().FirstOrDefault(m => m.Text.Equals("Project"));
 		var xivMenu = new ToolStripMenuItem("FFXIV");
