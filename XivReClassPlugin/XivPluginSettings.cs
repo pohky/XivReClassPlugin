@@ -17,7 +17,11 @@ public class XivPluginSettings {
 	public bool ShowNamespacesOnPointer = false;
 	public bool UseNamedAddresses = true;
 	public bool ShowInheritance = true;
+    public bool ShowExcelSheetNames = true;
 
+    public bool GuessClassSizes = true;
+    public bool TryGetSizeForEventInterfaces = false;
+	
 	public static XivPluginSettings Load() {
 		if (!File.Exists(SettingsPath))
 			return new XivPluginSettings();

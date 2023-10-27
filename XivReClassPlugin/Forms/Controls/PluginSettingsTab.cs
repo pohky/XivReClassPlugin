@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
@@ -12,6 +13,8 @@ public partial class PluginSettingsTab : UserControl {
 		TextBoxDataFile.Text = Ffxiv.Settings.ClientStructsDataPath;
 		TextBoxDataFile.TextChanged += TextBoxDataFile_TextChanged;
 		TextBoxDataFile.KeyDown += TextBoxDataFile_KeyDown;
+        if (!File.Exists(Ffxiv.Settings.ClientStructsDataPath))
+            TextBoxDataFile.BackColor = Color.IndianRed;
 
 		CheckBoxShowOffset.Checked = Ffxiv.Settings.FallbackModuleOffset;
 		CheckBoxShowOffset.CheckedChanged += CheckBoxShowOffset_CheckedChanged;
@@ -28,32 +31,63 @@ public partial class PluginSettingsTab : UserControl {
 		CheckBoxInheritance.Checked = Ffxiv.Settings.ShowInheritance;
 		CheckBoxInheritance.CheckedChanged += CheckBoxInheritance_CheckedChanged;
 
-		ConfigToolTip.SetToolTip(CheckBoxShowOffset, "This also attempts to get the Size of the Class\nif it finds a possible VFTable");
+        CheckBoxGuessClassSize.Checked = Ffxiv.Settings.GuessClassSizes;
+		CheckBoxGuessClassSize.CheckedChanged += CheckBoxGuessClassSizeOnCheckedChanged;
+
+        CheckBoxGuessEventInterfaces.Checked = Ffxiv.Settings.TryGetSizeForEventInterfaces;
+        CheckBoxGuessEventInterfaces.CheckedChanged += CheckBoxGuessEventInterfacesOnCheckedChanged;
+		
+        CheckBoxShowExcelSheet.Checked = Ffxiv.Settings.ShowExcelSheetNames;
+        CheckBoxShowExcelSheet.CheckedChanged += CheckBoxShowExcelSheetOnCheckedChanged;
+
+		const string sizeWarningText = @"NOTE: increased chance for wrong guesses in some cases.";
+		ConfigToolTip.SetToolTip(CheckBoxGuessEventInterfaces, sizeWarningText);
 	}
 
-	private void OpenDataButton_Click(object sender, EventArgs e) {
+    private void CheckBoxShowExcelSheetOnCheckedChanged(object sender, EventArgs e) {
+        if (sender is CheckBox cb)
+            Ffxiv.Settings.ShowExcelSheetNames = cb.Checked;
+    }
+
+    private void CheckBoxGuessEventInterfacesOnCheckedChanged(object sender, EventArgs e) {
+        if (sender is CheckBox cb)
+            Ffxiv.Settings.TryGetSizeForEventInterfaces = cb.Checked;
+    }
+
+    private void CheckBoxGuessClassSizeOnCheckedChanged(object sender, EventArgs e) {
+        if (sender is CheckBox cb)
+            Ffxiv.Settings.GuessClassSizes = cb.Checked;
+    }
+
+    private void OpenDataButton_Click(object sender, EventArgs e) {
 		DataFileDialog.ShowDialog();
 	}
 
 	private void ButtonReloadData_Click(object sender, EventArgs e) {
 		Ffxiv.Settings.ClientStructsDataPath = TextBoxDataFile.Text;
-		Ffxiv.Symbols.Update();
+		Ffxiv.Reload();
 	}
 
 	private void DataFileDialog_FileOk(object sender, CancelEventArgs e) {
 		if (sender is not OpenFileDialog dialog || !File.Exists(dialog.FileName))
 			return;
-
-		Ffxiv.Settings.ClientStructsDataPath = dialog.FileName;
-		TextBoxDataFile.Text = dialog.FileName;
+        TextBoxDataFile.TextChanged -= TextBoxDataFile_TextChanged;
+        TextBoxDataFile.Text = dialog.FileName;
+		TextBoxDataFile.ResetBackColor();
+        TextBoxDataFile.TextChanged += TextBoxDataFile_TextChanged;
+        Ffxiv.Settings.ClientStructsDataPath = dialog.FileName;
+        Ffxiv.Reload();
 	}
 
 	private void TextBoxDataFile_TextChanged(object sender, EventArgs e) {
 		if (sender is not TextBox tb)
 			return;
-		Ffxiv.Settings.ClientStructsDataPath = tb.Text;
-		if (File.Exists(tb.Text))
-			Ffxiv.Symbols.Update();
+        var changed = !Ffxiv.Settings.ClientStructsDataPath.Equals(tb.Text.Trim());
+		if (changed && File.Exists(tb.Text)) {
+            tb.ResetBackColor();
+            Ffxiv.Settings.ClientStructsDataPath = tb.Text.Trim();
+			Ffxiv.Reload();
+        }
 	}
 
 	private void TextBoxDataFile_KeyDown(object sender, KeyEventArgs e) {

@@ -13,17 +13,17 @@
     <Product>ReClass.NET Plugin</Product>
     <Authors>Pohky</Authors>
     <Description>FFXIVClientStructs Plugin</Description>
-    <Version>1.0.2.8</Version>
+    <Version>1.0.3.0</Version>
 
     <ReClassExe>D:\Tools\ReClass\$(Platform)\ReClass.NET.exe</ReClassExe>
     <PluginOutDir>D:\Tools\ReClass\$(Platform)\Plugins\</PluginOutDir>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iced" Version="1.18.0" />
+    <PackageReference Include="Iced" Version="1.20.0" />
     <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.18.2" />
     <PackageReference Include="Lib.Harmony" Version="2.2.2" />
-    <PackageReference Include="YamlDotNet" Version="13.1.0" />
+    <PackageReference Include="YamlDotNet" Version="13.7.1" />
     <Reference Include="ReClass.NET" HintPath="$(ReClassExe)" Private="false" />
   </ItemGroup>
 

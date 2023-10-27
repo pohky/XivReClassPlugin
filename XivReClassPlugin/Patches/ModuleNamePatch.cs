@@ -4,7 +4,6 @@ using ReClassNET.Memory;
 using System.Text.RegularExpressions;
 using HarmonyLib;
 using XivReClassPlugin.Game;
-using System.Text;
 
 namespace XivReClassPlugin.Patches; 
 
@@ -18,6 +17,7 @@ public class ModuleNamePatch {
 	public static bool Prefix(ref Module __result, string name) {
 		if (string.IsNullOrEmpty(name))
 			return true;
+
 		if (Ffxiv.Symbols.TryGetInstance(name, out var address)) {
 			__result = new Module { Start = address, Name = name };
 			return false;
@@ -29,6 +29,16 @@ public class ModuleNamePatch {
 				return false;
 			}
 		}
+
+        if (Ffxiv.Address.Framework != 0 && name.Equals("Framework", StringComparison.OrdinalIgnoreCase)) {
+            __result = new Module { Start = Ffxiv.Address.Framework, Name = name };
+            return false;
+        }
+		
+        if (Ffxiv.Address.UiModule != 0 && name.Equals("UIModule", StringComparison.OrdinalIgnoreCase)) {
+            __result = new Module { Start = Ffxiv.Address.UiModule, Name = name };
+            return false;
+        }
 
 		var match = AgentIdRegex.Match(name);
 		if (match.Success && Ffxiv.Address.AgentModule != 0) {
@@ -58,17 +68,17 @@ public class ModuleNamePatch {
 			Addon? addon = null;
 
 			if (matchAddonId.Success) {
-				if (!uint.TryParse(matchAddonId.Groups["AddonId"].Value, out var AddonId))
+				if (!uint.TryParse(matchAddonId.Groups["AddonId"].Value, out var addonId))
 					return true;
 
-				if (!AtkUnitManager.TryGetAddonById(AddonId, out addon))
+				if (!AtkUnitManager.TryGetAddonById(addonId, out addon))
 					return true;
 			}
 			else if (matchAddonName.Success) {
-				if (matchAddonName.Groups["AddonName"].Value is not { } AddonName)
+				if (matchAddonName.Groups["AddonName"].Value is not { } addonName)
 					return true;
 
-				if (!AtkUnitManager.TryGetAddonByName(AddonName, out addon))
+				if (!AtkUnitManager.TryGetAddonByName(addonName, out addon))
 					return true;
 			}
 

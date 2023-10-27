@@ -145,19 +145,19 @@ public class CsCodeGenerator : ICodeGenerator {
 				writer.WriteLine();
 			} else if (node is ArrayNode arrNode) {
 				if (arrNode.InnerNode is ClassInstanceNode instanceNode) {
-					writer.Write($"[FieldOffset(0x{node.Offset:X2})]");
-					writer.Write($"[FixedSizeArray<{instanceNode.InnerNode.Name}>({arrNode.Count})] ");
+                    writer.WriteLine($"[FixedSizeArray<{instanceNode.InnerNode.Name}>({arrNode.Count})]");
+					writer.Write($"[FieldOffset(0x{node.Offset:X2})] ");
 					writer.Write($"public fixed byte {node.Name}[{arrNode.Count} * 0x{instanceNode.MemorySize:X2}];");
 					writer.WriteLine();
 				} else {
 					if (arrNode.InnerNode is Utf8StringNode utf8) {
-						writer.Write($"[FieldOffset(0x{node.Offset:X2})]");
-						writer.Write($"[FixedSizeArray<Utf8String>({arrNode.Count})] ");
+						writer.WriteLine($"[FixedSizeArray<Utf8String>({arrNode.Count})]");
+                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] ");
 						writer.Write($"public fixed byte {node.Name}[{arrNode.Count} * 0x{utf8.MemorySize:X2}];");
 						writer.WriteLine();
 					} else if (arrNode.InnerNode is AtkValueNode valueNode) {
-						writer.Write($"[FieldOffset(0x{node.Offset:X2})]");
-						writer.Write($"[FixedSizeArray<AtkValue>({arrNode.Count})] ");
+                        writer.WriteLine($"[FixedSizeArray<AtkValue>({arrNode.Count})]");
+                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] ");
 						writer.Write($"public fixed byte {node.Name}[{arrNode.Count} * 0x{valueNode.MemorySize:X2}];");
 						writer.WriteLine();
 					} else {
@@ -166,7 +166,12 @@ public class CsCodeGenerator : ICodeGenerator {
 							writer.WriteLine($"// Unhandled Array Node: {arrNode.InnerNode.GetType().Name}[] {arrNode.Name}");
 							continue;
 						}
-						writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed {type} {node.Name}[{arrNode.Count} * 0x{arrNode.InnerNode.MemorySize:X2}];");
+
+                        if (arrNode.InnerNode is BaseNumericNode) {
+                            writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed {type} {node.Name}[{arrNode.Count}];");
+                        } else {
+                            writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed byte {node.Name}[{arrNode.Count} * 0x{arrNode.InnerNode.MemorySize:X2}];");
+                        }
 						writer.WriteLine();
 					}
 				}

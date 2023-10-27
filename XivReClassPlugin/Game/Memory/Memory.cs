@@ -7,7 +7,7 @@ public class Memory : MemoryAccess {
 	private static readonly Module EmptyModule = new() { Name = string.Empty, Path = string.Empty };
 	public Module MainModule { get; private set; } = EmptyModule;
 
-	public void Update() {
+    public void Update() {
 		if (!Process.IsValid) {
 			MainModule = EmptyModule;
             return;
@@ -40,7 +40,12 @@ public class Memory : MemoryAccess {
     public int TryGetSizeFromFunction(nint function) {
         if (function <= 0x10_000) return 0;
 
-        var reader = new ByteArrayCodeReader(Read<byte>(function, 512));
+        var data = Read<byte>(function, 512);
+        
+        if (data[0] == 0x48 && data[1] == 0x81 && data[2] == 0xE9 && data[7] == 0xE9)
+            return -1; // sub rcx, jmp, possible subclass dtor, safer to just return
+
+        var reader = new ByteArrayCodeReader(data);
         var decoder = Decoder.Create(64, reader, (ulong)function);
         var size = 0ul;
         var mightBeValid = false;

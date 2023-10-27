@@ -10,7 +10,6 @@ using ReClassNET.Memory;
 using ReClassNET.Nodes;
 using ReClassNET.Plugins;
 using ReClassNET.UI;
-using XivReClassPlugin.Data;
 using XivReClassPlugin.Forms;
 using XivReClassPlugin.Forms.Controls;
 using XivReClassPlugin.NodeReaders;
