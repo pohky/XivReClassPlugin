@@ -19,7 +19,7 @@ public class XivClassNodeReader : INodeInfoReader {
         }
 
         var ptr = reader.ReadRemoteIntPtr(nodeValue);
-        if (ptr.MayBeValid() && Ffxiv.Symbols.TryGetClassName(ptr, out var className, Ffxiv.Settings.ShowNamespacesOnPointer)) {
+        if (ptr.MayBeValid() && Ffxiv.Symbols.TryGetClassName(ptr, out var className, Ffxiv.Settings.ShowNamespacesOnPointer, Ffxiv.Settings.ShowInheritanceOnPointer)) {
             if (!Ffxiv.Settings.ShowExcelSheetNames)
                 return $"-> {className}";
 

@@ -15,6 +15,7 @@ public class XivPluginSettings {
 	public bool FallbackModuleOffset = true;
 	public bool ShowNamespaces = false;
 	public bool ShowNamespacesOnPointer = false;
+	public bool ShowInheritanceOnPointer = false;
 	public bool UseNamedAddresses = true;
 	public bool ShowInheritance = true;
     public bool ShowExcelSheetNames = true;

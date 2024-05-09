@@ -23,7 +23,8 @@ public class ModuleNamePatch {
 			return false;
 		}
 
-		if (name.Equals("InstanceContentDirector", StringComparison.OrdinalIgnoreCase)) {
+		if (name.Equals("InstanceContentDirector", StringComparison.OrdinalIgnoreCase) 
+            || name.Equals("ActiveContentDirector", StringComparison.OrdinalIgnoreCase)) {
 			if (EventFramework.DirectorModule.ActiveContentDirector != 0) {
 				__result = new Module { Start = EventFramework.DirectorModule.ActiveContentDirector, Name = name };
 				return false;
@@ -37,6 +38,16 @@ public class ModuleNamePatch {
 		
         if (Ffxiv.Address.UiModule != 0 && name.Equals("UIModule", StringComparison.OrdinalIgnoreCase)) {
             __result = new Module { Start = Ffxiv.Address.UiModule, Name = name };
+            return false;
+        }
+
+        if (Ffxiv.Address.Framework != 0 && name.Equals("EventFramework", StringComparison.OrdinalIgnoreCase)) {
+            __result = new Module { Start = Ffxiv.Address.EventFramework, Name = name };
+            return false;
+        }
+
+        if (Ffxiv.Address.Framework != 0 && name.Equals("AgentModule", StringComparison.OrdinalIgnoreCase)) {
+            __result = new Module { Start = Ffxiv.Address.AgentModule, Name = name };
             return false;
         }
 

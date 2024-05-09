@@ -37,25 +37,26 @@ namespace XivReClassPlugin.Forms.Controls
             this.label1 = new System.Windows.Forms.Label();
             this.ButtonReloadData = new System.Windows.Forms.Button();
             this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.CheckBoxShowOffset = new System.Windows.Forms.CheckBox();
-            this.CheckBoxNamespacePointer = new System.Windows.Forms.CheckBox();
             this.ConfigToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.PanelOtherSettings = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.GroupBoxClassSize = new System.Windows.Forms.GroupBox();
+            this.TextBoxSizeNote = new System.Windows.Forms.TextBox();
+            this.CheckBoxGuessEventInterfaces = new System.Windows.Forms.CheckBox();
+            this.CheckBoxGuessClassSize = new System.Windows.Forms.CheckBox();
             this.GroupBoxClassNames = new System.Windows.Forms.GroupBox();
+            this.CheckBoxShowExcelSheet = new System.Windows.Forms.CheckBox();
             this.CheckBoxNamespace = new System.Windows.Forms.CheckBox();
             this.CheckBoxInheritance = new System.Windows.Forms.CheckBox();
             this.RadioButtonRtti = new System.Windows.Forms.RadioButton();
             this.RadioButtonNamedAddress = new System.Windows.Forms.RadioButton();
-            this.GroupBoxClassSize = new System.Windows.Forms.GroupBox();
-            this.CheckBoxGuessClassSize = new System.Windows.Forms.CheckBox();
-            this.CheckBoxGuessEventInterfaces = new System.Windows.Forms.CheckBox();
-            this.CheckBoxShowExcelSheet = new System.Windows.Forms.CheckBox();
-            this.TextBoxSizeNote = new System.Windows.Forms.TextBox();
+            this.CheckBoxShowOffset = new System.Windows.Forms.CheckBox();
+            this.CheckBoxNamespacePointer = new System.Windows.Forms.CheckBox();
+            this.CheckBoxInheritancePointer = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.mainTableLayoutPanel.SuspendLayout();
-            this.PanelOtherSettings.SuspendLayout();
-            this.GroupBoxClassNames.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.GroupBoxClassSize.SuspendLayout();
+            this.GroupBoxClassNames.SuspendLayout();
             this.SuspendLayout();
             // 
             // DataFileDialog
@@ -134,53 +135,78 @@ namespace XivReClassPlugin.Forms.Controls
             // 
             this.mainTableLayoutPanel.ColumnCount = 1;
             this.mainTableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.mainTableLayoutPanel.Controls.Add(this.CheckBoxShowOffset, 0, 1);
             this.mainTableLayoutPanel.Controls.Add(this.tableLayoutPanel1, 0, 0);
-            this.mainTableLayoutPanel.Controls.Add(this.CheckBoxNamespacePointer, 0, 2);
-            this.mainTableLayoutPanel.Controls.Add(this.PanelOtherSettings, 0, 3);
+            this.mainTableLayoutPanel.Controls.Add(this.panel1, 0, 1);
             this.mainTableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.mainTableLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.mainTableLayoutPanel.Name = "mainTableLayoutPanel";
-            this.mainTableLayoutPanel.RowCount = 4;
+            this.mainTableLayoutPanel.RowCount = 2;
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 24F));
-            this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.mainTableLayoutPanel.Size = new System.Drawing.Size(559, 350);
             this.mainTableLayoutPanel.TabIndex = 3;
             // 
-            // CheckBoxShowOffset
+            // panel1
             // 
-            this.CheckBoxShowOffset.AutoSize = true;
-            this.CheckBoxShowOffset.Location = new System.Drawing.Point(3, 37);
-            this.CheckBoxShowOffset.Name = "CheckBoxShowOffset";
-            this.CheckBoxShowOffset.Size = new System.Drawing.Size(186, 17);
-            this.CheckBoxShowOffset.TabIndex = 8;
-            this.CheckBoxShowOffset.Text = "Show Offset if Name is not known";
-            this.CheckBoxShowOffset.UseVisualStyleBackColor = true;
+            this.panel1.Controls.Add(this.CheckBoxInheritancePointer);
+            this.panel1.Controls.Add(this.GroupBoxClassSize);
+            this.panel1.Controls.Add(this.GroupBoxClassNames);
+            this.panel1.Controls.Add(this.CheckBoxShowOffset);
+            this.panel1.Controls.Add(this.CheckBoxNamespacePointer);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(3, 37);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(553, 310);
+            this.panel1.TabIndex = 12;
             // 
-            // CheckBoxNamespacePointer
+            // GroupBoxClassSize
             // 
-            this.CheckBoxNamespacePointer.AutoSize = true;
-            this.CheckBoxNamespacePointer.Location = new System.Drawing.Point(3, 60);
-            this.CheckBoxNamespacePointer.Name = "CheckBoxNamespacePointer";
-            this.CheckBoxNamespacePointer.Size = new System.Drawing.Size(177, 17);
-            this.CheckBoxNamespacePointer.TabIndex = 10;
-            this.CheckBoxNamespacePointer.Text = "Include Namespace on Pointers";
-            this.CheckBoxNamespacePointer.UseVisualStyleBackColor = true;
+            this.GroupBoxClassSize.Controls.Add(this.TextBoxSizeNote);
+            this.GroupBoxClassSize.Controls.Add(this.CheckBoxGuessEventInterfaces);
+            this.GroupBoxClassSize.Controls.Add(this.CheckBoxGuessClassSize);
+            this.GroupBoxClassSize.Location = new System.Drawing.Point(227, 72);
+            this.GroupBoxClassSize.Name = "GroupBoxClassSize";
+            this.GroupBoxClassSize.Size = new System.Drawing.Size(241, 154);
+            this.GroupBoxClassSize.TabIndex = 19;
+            this.GroupBoxClassSize.TabStop = false;
+            this.GroupBoxClassSize.Text = "Class Sizes";
             // 
-            // PanelOtherSettings
+            // TextBoxSizeNote
             // 
-            this.PanelOtherSettings.Controls.Add(this.GroupBoxClassSize);
-            this.PanelOtherSettings.Controls.Add(this.GroupBoxClassNames);
-            this.PanelOtherSettings.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.PanelOtherSettings.Location = new System.Drawing.Point(3, 84);
-            this.PanelOtherSettings.Name = "PanelOtherSettings";
-            this.PanelOtherSettings.Size = new System.Drawing.Size(553, 263);
-            this.PanelOtherSettings.TabIndex = 11;
+            this.TextBoxSizeNote.BackColor = System.Drawing.SystemColors.Control;
+            this.TextBoxSizeNote.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.TextBoxSizeNote.Enabled = false;
+            this.TextBoxSizeNote.Location = new System.Drawing.Point(6, 75);
+            this.TextBoxSizeNote.Multiline = true;
+            this.TextBoxSizeNote.Name = "TextBoxSizeNote";
+            this.TextBoxSizeNote.ReadOnly = true;
+            this.TextBoxSizeNote.Size = new System.Drawing.Size(229, 63);
+            this.TextBoxSizeNote.TabIndex = 2;
+            this.TextBoxSizeNote.Text = "Guesses are based on an attempt to read the size from the virtual destructor.\r\nIt" +
+    "\'s not guaranteed to be successful or always correct.";
+            // 
+            // CheckBoxGuessEventInterfaces
+            // 
+            this.CheckBoxGuessEventInterfaces.AutoSize = true;
+            this.CheckBoxGuessEventInterfaces.Location = new System.Drawing.Point(6, 42);
+            this.CheckBoxGuessEventInterfaces.Name = "CheckBoxGuessEventInterfaces";
+            this.CheckBoxGuessEventInterfaces.Size = new System.Drawing.Size(154, 17);
+            this.CheckBoxGuessEventInterfaces.TabIndex = 1;
+            this.CheckBoxGuessEventInterfaces.Text = "Try for AtkEventInterfaces*";
+            this.CheckBoxGuessEventInterfaces.UseVisualStyleBackColor = true;
+            // 
+            // CheckBoxGuessClassSize
+            // 
+            this.CheckBoxGuessClassSize.AutoSize = true;
+            this.CheckBoxGuessClassSize.Location = new System.Drawing.Point(6, 20);
+            this.CheckBoxGuessClassSize.Name = "CheckBoxGuessClassSize";
+            this.CheckBoxGuessClassSize.Size = new System.Drawing.Size(140, 17);
+            this.CheckBoxGuessClassSize.TabIndex = 0;
+            this.CheckBoxGuessClassSize.Text = "Try to guess Class Sizes";
+            this.CheckBoxGuessClassSize.UseVisualStyleBackColor = true;
             // 
             // GroupBoxClassNames
             // 
@@ -189,12 +215,22 @@ namespace XivReClassPlugin.Forms.Controls
             this.GroupBoxClassNames.Controls.Add(this.CheckBoxInheritance);
             this.GroupBoxClassNames.Controls.Add(this.RadioButtonRtti);
             this.GroupBoxClassNames.Controls.Add(this.RadioButtonNamedAddress);
-            this.GroupBoxClassNames.Location = new System.Drawing.Point(0, 3);
+            this.GroupBoxClassNames.Location = new System.Drawing.Point(6, 72);
             this.GroupBoxClassNames.Name = "GroupBoxClassNames";
             this.GroupBoxClassNames.Size = new System.Drawing.Size(215, 154);
-            this.GroupBoxClassNames.TabIndex = 14;
+            this.GroupBoxClassNames.TabIndex = 18;
             this.GroupBoxClassNames.TabStop = false;
             this.GroupBoxClassNames.Text = "Class Name Display";
+            // 
+            // CheckBoxShowExcelSheet
+            // 
+            this.CheckBoxShowExcelSheet.AutoSize = true;
+            this.CheckBoxShowExcelSheet.Location = new System.Drawing.Point(10, 111);
+            this.CheckBoxShowExcelSheet.Name = "CheckBoxShowExcelSheet";
+            this.CheckBoxShowExcelSheet.Size = new System.Drawing.Size(176, 17);
+            this.CheckBoxShowExcelSheet.TabIndex = 15;
+            this.CheckBoxShowExcelSheet.Text = "Try showing ExcelSheet Names";
+            this.CheckBoxShowExcelSheet.UseVisualStyleBackColor = true;
             // 
             // CheckBoxNamespace
             // 
@@ -240,61 +276,35 @@ namespace XivReClassPlugin.Forms.Controls
             this.RadioButtonNamedAddress.UseVisualStyleBackColor = true;
             this.RadioButtonNamedAddress.Click += new System.EventHandler(this.RadioButtonNamedAddress_Click);
             // 
-            // GroupBoxClassSize
+            // CheckBoxShowOffset
             // 
-            this.GroupBoxClassSize.Controls.Add(this.TextBoxSizeNote);
-            this.GroupBoxClassSize.Controls.Add(this.CheckBoxGuessEventInterfaces);
-            this.GroupBoxClassSize.Controls.Add(this.CheckBoxGuessClassSize);
-            this.GroupBoxClassSize.Location = new System.Drawing.Point(223, 3);
-            this.GroupBoxClassSize.Name = "GroupBoxClassSize";
-            this.GroupBoxClassSize.Size = new System.Drawing.Size(241, 154);
-            this.GroupBoxClassSize.TabIndex = 15;
-            this.GroupBoxClassSize.TabStop = false;
-            this.GroupBoxClassSize.Text = "Class Sizes";
+            this.CheckBoxShowOffset.AutoSize = true;
+            this.CheckBoxShowOffset.Location = new System.Drawing.Point(6, 3);
+            this.CheckBoxShowOffset.Name = "CheckBoxShowOffset";
+            this.CheckBoxShowOffset.Size = new System.Drawing.Size(186, 17);
+            this.CheckBoxShowOffset.TabIndex = 16;
+            this.CheckBoxShowOffset.Text = "Show Offset if Name is not known";
+            this.CheckBoxShowOffset.UseVisualStyleBackColor = true;
             // 
-            // CheckBoxGuessClassSize
+            // CheckBoxNamespacePointer
             // 
-            this.CheckBoxGuessClassSize.AutoSize = true;
-            this.CheckBoxGuessClassSize.Location = new System.Drawing.Point(6, 20);
-            this.CheckBoxGuessClassSize.Name = "CheckBoxGuessClassSize";
-            this.CheckBoxGuessClassSize.Size = new System.Drawing.Size(140, 17);
-            this.CheckBoxGuessClassSize.TabIndex = 0;
-            this.CheckBoxGuessClassSize.Text = "Try to guess Class Sizes";
-            this.CheckBoxGuessClassSize.UseVisualStyleBackColor = true;
+            this.CheckBoxNamespacePointer.AutoSize = true;
+            this.CheckBoxNamespacePointer.Location = new System.Drawing.Point(6, 26);
+            this.CheckBoxNamespacePointer.Name = "CheckBoxNamespacePointer";
+            this.CheckBoxNamespacePointer.Size = new System.Drawing.Size(177, 17);
+            this.CheckBoxNamespacePointer.TabIndex = 17;
+            this.CheckBoxNamespacePointer.Text = "Include Namespace on Pointers";
+            this.CheckBoxNamespacePointer.UseVisualStyleBackColor = true;
             // 
-            // CheckBoxGuessEventInterfaces
+            // CheckBoxInheritancePointer
             // 
-            this.CheckBoxGuessEventInterfaces.AutoSize = true;
-            this.CheckBoxGuessEventInterfaces.Location = new System.Drawing.Point(6, 42);
-            this.CheckBoxGuessEventInterfaces.Name = "CheckBoxGuessEventInterfaces";
-            this.CheckBoxGuessEventInterfaces.Size = new System.Drawing.Size(154, 17);
-            this.CheckBoxGuessEventInterfaces.TabIndex = 1;
-            this.CheckBoxGuessEventInterfaces.Text = "Try for AtkEventInterfaces*";
-            this.CheckBoxGuessEventInterfaces.UseVisualStyleBackColor = true;
-            // 
-            // CheckBoxShowExcelSheet
-            // 
-            this.CheckBoxShowExcelSheet.AutoSize = true;
-            this.CheckBoxShowExcelSheet.Location = new System.Drawing.Point(10, 111);
-            this.CheckBoxShowExcelSheet.Name = "CheckBoxShowExcelSheet";
-            this.CheckBoxShowExcelSheet.Size = new System.Drawing.Size(176, 17);
-            this.CheckBoxShowExcelSheet.TabIndex = 15;
-            this.CheckBoxShowExcelSheet.Text = "Try showing ExcelSheet Names";
-            this.CheckBoxShowExcelSheet.UseVisualStyleBackColor = true;
-            // 
-            // TextBoxSizeNote
-            // 
-            this.TextBoxSizeNote.BackColor = System.Drawing.SystemColors.Control;
-            this.TextBoxSizeNote.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.TextBoxSizeNote.Enabled = false;
-            this.TextBoxSizeNote.Location = new System.Drawing.Point(6, 75);
-            this.TextBoxSizeNote.Multiline = true;
-            this.TextBoxSizeNote.Name = "TextBoxSizeNote";
-            this.TextBoxSizeNote.ReadOnly = true;
-            this.TextBoxSizeNote.Size = new System.Drawing.Size(229, 63);
-            this.TextBoxSizeNote.TabIndex = 2;
-            this.TextBoxSizeNote.Text = "Guesses are based on an attempt to read the size from the virtual destructor.\r\nIt" +
-    "\'s not guaranteed to be successful or always correct.";
+            this.CheckBoxInheritancePointer.AutoSize = true;
+            this.CheckBoxInheritancePointer.Location = new System.Drawing.Point(6, 49);
+            this.CheckBoxInheritancePointer.Name = "CheckBoxInheritancePointer";
+            this.CheckBoxInheritancePointer.Size = new System.Drawing.Size(165, 17);
+            this.CheckBoxInheritancePointer.TabIndex = 20;
+            this.CheckBoxInheritancePointer.Text = "Show Inheritance on Pointers";
+            this.CheckBoxInheritancePointer.UseVisualStyleBackColor = true;
             // 
             // PluginSettingsTab
             // 
@@ -306,12 +316,12 @@ namespace XivReClassPlugin.Forms.Controls
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.mainTableLayoutPanel.ResumeLayout(false);
-            this.mainTableLayoutPanel.PerformLayout();
-            this.PanelOtherSettings.ResumeLayout(false);
-            this.GroupBoxClassNames.ResumeLayout(false);
-            this.GroupBoxClassNames.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.GroupBoxClassSize.ResumeLayout(false);
             this.GroupBoxClassSize.PerformLayout();
+            this.GroupBoxClassNames.ResumeLayout(false);
+            this.GroupBoxClassNames.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -325,19 +335,20 @@ namespace XivReClassPlugin.Forms.Controls
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button ButtonReloadData;
         private System.Windows.Forms.TableLayoutPanel mainTableLayoutPanel;
-        private System.Windows.Forms.CheckBox CheckBoxShowOffset;
-        private System.Windows.Forms.CheckBox CheckBoxNamespacePointer;
 		private System.Windows.Forms.ToolTip ConfigToolTip;
-        private System.Windows.Forms.Panel PanelOtherSettings;
+        private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox GroupBoxClassSize;
+        private System.Windows.Forms.TextBox TextBoxSizeNote;
+        private System.Windows.Forms.CheckBox CheckBoxGuessEventInterfaces;
+        private System.Windows.Forms.CheckBox CheckBoxGuessClassSize;
         private System.Windows.Forms.GroupBox GroupBoxClassNames;
+        private System.Windows.Forms.CheckBox CheckBoxShowExcelSheet;
         private System.Windows.Forms.CheckBox CheckBoxNamespace;
         private System.Windows.Forms.CheckBox CheckBoxInheritance;
         private System.Windows.Forms.RadioButton RadioButtonRtti;
         private System.Windows.Forms.RadioButton RadioButtonNamedAddress;
-        private System.Windows.Forms.CheckBox CheckBoxGuessEventInterfaces;
-        private System.Windows.Forms.CheckBox CheckBoxGuessClassSize;
-        private System.Windows.Forms.CheckBox CheckBoxShowExcelSheet;
-        private System.Windows.Forms.TextBox TextBoxSizeNote;
+        private System.Windows.Forms.CheckBox CheckBoxShowOffset;
+        private System.Windows.Forms.CheckBox CheckBoxNamespacePointer;
+        private System.Windows.Forms.CheckBox CheckBoxInheritancePointer;
     }
 }

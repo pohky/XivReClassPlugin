@@ -62,7 +62,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 				node.Name = Name;
 			}
 		}
-		node.AddBytes(Math.Max(0x28, Size));
+		node.AddBytes(Math.Max(0x30, Size));
 		return node;
 	}
 
