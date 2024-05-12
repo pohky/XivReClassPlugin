@@ -59,13 +59,15 @@ public class Symbols {
 				classInfo = classInfo.ParentClass;
 			}
 
+            var mainModule = Ffxiv.Memory.MainModule;
+
 			list.Reverse();
 			list.ForEach(ci => {
 				if (ci.Offset == 0) return;
-				var vftable = Ffxiv.Memory.MainModule.Start + (nint)ci.Offset;
+				var vftable = mainModule.Start + (nint)ci.Offset;
 				foreach (var vf in ci.VirtualFunctions) {
 					var addr = Ffxiv.Memory.Read<nint>(vftable + vf.Key * 8);
-					if (addr != 0 && addr != pureCall && !NamedAddresses.ContainsKey(addr))
+					if (addr > 0x10000 && IsInRange(addr, mainModule.Start, mainModule.End) && addr != pureCall && !NamedAddresses.ContainsKey(addr))
 						NamedAddresses[addr] = $"{ci.Name}.{vf.Value}";
 				}
 			});
@@ -77,4 +79,8 @@ public class Symbols {
 		foreach (var kv in NamedAddresses)
 			Ffxiv.Memory.Process.NamedAddresses[kv.Key] = kv.Value;
 	}
+
+	private static bool IsInRange(nint address, nint start, nint end) {
+        return address >= start && address < end;
+    }
 }

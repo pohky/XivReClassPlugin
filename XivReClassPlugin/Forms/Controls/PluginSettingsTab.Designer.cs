@@ -37,8 +37,8 @@ namespace XivReClassPlugin.Forms.Controls
             this.label1 = new System.Windows.Forms.Label();
             this.ButtonReloadData = new System.Windows.Forms.Button();
             this.mainTableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.ConfigToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
+            this.CheckBoxInheritancePointer = new System.Windows.Forms.CheckBox();
             this.GroupBoxClassSize = new System.Windows.Forms.GroupBox();
             this.TextBoxSizeNote = new System.Windows.Forms.TextBox();
             this.CheckBoxGuessEventInterfaces = new System.Windows.Forms.CheckBox();
@@ -51,7 +51,7 @@ namespace XivReClassPlugin.Forms.Controls
             this.RadioButtonNamedAddress = new System.Windows.Forms.RadioButton();
             this.CheckBoxShowOffset = new System.Windows.Forms.CheckBox();
             this.CheckBoxNamespacePointer = new System.Windows.Forms.CheckBox();
-            this.CheckBoxInheritancePointer = new System.Windows.Forms.CheckBox();
+            this.ConfigToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.mainTableLayoutPanel.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -161,6 +161,16 @@ namespace XivReClassPlugin.Forms.Controls
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(553, 310);
             this.panel1.TabIndex = 12;
+            // 
+            // CheckBoxInheritancePointer
+            // 
+            this.CheckBoxInheritancePointer.AutoSize = true;
+            this.CheckBoxInheritancePointer.Location = new System.Drawing.Point(6, 49);
+            this.CheckBoxInheritancePointer.Name = "CheckBoxInheritancePointer";
+            this.CheckBoxInheritancePointer.Size = new System.Drawing.Size(165, 17);
+            this.CheckBoxInheritancePointer.TabIndex = 20;
+            this.CheckBoxInheritancePointer.Text = "Show Inheritance on Pointers";
+            this.CheckBoxInheritancePointer.UseVisualStyleBackColor = true;
             // 
             // GroupBoxClassSize
             // 
@@ -295,16 +305,6 @@ namespace XivReClassPlugin.Forms.Controls
             this.CheckBoxNamespacePointer.TabIndex = 17;
             this.CheckBoxNamespacePointer.Text = "Include Namespace on Pointers";
             this.CheckBoxNamespacePointer.UseVisualStyleBackColor = true;
-            // 
-            // CheckBoxInheritancePointer
-            // 
-            this.CheckBoxInheritancePointer.AutoSize = true;
-            this.CheckBoxInheritancePointer.Location = new System.Drawing.Point(6, 49);
-            this.CheckBoxInheritancePointer.Name = "CheckBoxInheritancePointer";
-            this.CheckBoxInheritancePointer.Size = new System.Drawing.Size(165, 17);
-            this.CheckBoxInheritancePointer.TabIndex = 20;
-            this.CheckBoxInheritancePointer.Text = "Show Inheritance on Pointers";
-            this.CheckBoxInheritancePointer.UseVisualStyleBackColor = true;
             // 
             // PluginSettingsTab
             // 
