@@ -36,9 +36,6 @@ public class CsCodeGenerator : ICodeGenerator {
 		[typeof(Utf8TextPtrNode)] = "byte*",
 		[typeof(Utf16TextPtrNode)] = "char*",
 		[typeof(Utf32TextPtrNode)] = "int*",
-		[typeof(Utf8TextNode)] = "fixed byte",
-		[typeof(Utf16TextNode)] = "fixed char",
-		[typeof(Utf32TextNode)] = "fixed int",
 
 		[typeof(FunctionPtrNode)] = "nint",
 		[typeof(PointerNode)] = "void*",
@@ -57,15 +54,10 @@ public class CsCodeGenerator : ICodeGenerator {
 
 	public string GenerateCode(IReadOnlyList<ClassNode> classes, IReadOnlyList<EnumDescription> enums, ILogger logger) {
 		using var sw = new StringWriter();
-		using var iw = new IndentedTextWriter(sw, "\t");
+        using var iw = new IndentedTextWriter(sw, new string(' ', 4));
 
-		iw.WriteLine("using System;");
+        // just to make sure it's using Numerics types if the entire thing is copied
 		iw.WriteLine("using System.Numerics;");
-		iw.WriteLine("using System.Runtime.InteropServices;");
-		iw.WriteLine("using System.Runtime.CompilerServices;");
-		iw.WriteLine("using FFXIVClientStructs.STD;");
-		iw.WriteLine("using FFXIVClientStructs.FFXIV.Component.GUI;");
-		iw.WriteLine("using FFXIVClientStructs.FFXIV.Client.System.String;");
 		iw.WriteLine();
 
 		foreach (var enumDef in enums) {
@@ -122,6 +114,9 @@ public class CsCodeGenerator : ICodeGenerator {
 		if (!string.IsNullOrEmpty(classNode.Comment))
 			writer.WriteLine($"// {classNode.Comment}");
 
+        if (classNode.Nodes.Any(NodeNeedsInterop))
+            writer.WriteLine("[GenerateInterop]");
+
 		writer.WriteLine($"[StructLayout(LayoutKind.Explicit, Size = 0x{classNode.MemorySize:X2})]");
 		writer.WriteLine($"public unsafe partial struct {classNode.Name} {{");
 
@@ -134,55 +129,48 @@ public class CsCodeGenerator : ICodeGenerator {
 				if (attribute != null)
 					writer.WriteLine(attribute);
 
-				if (node is BaseTextNode tn && type.Contains("fixed")) {
-					writer.Write($"[FieldOffset(0x{node.Offset:X2})] public {type} {node.Name}[{tn.Length}]; // string");
-				} else {
-					writer.Write($"[FieldOffset(0x{node.Offset:X2})] public {type} {node.Name};");
-					if (!string.IsNullOrEmpty(node.Comment))
-						writer.Write($" // {node.Comment}");
-				}
+                writer.Write($"[FieldOffset(0x{node.Offset:X2})] public {type} {node.Name};");
+                if (!string.IsNullOrEmpty(node.Comment))
+                    writer.Write($" // {node.Comment}");
 
 				writer.WriteLine();
-			} else if (node is ArrayNode arrNode) {
-				if (arrNode.InnerNode is ClassInstanceNode instanceNode) {
-                    writer.WriteLine($"[FixedSizeArray<{instanceNode.InnerNode.Name}>({arrNode.Count})]");
-					writer.Write($"[FieldOffset(0x{node.Offset:X2})] ");
-					writer.Write($"public fixed byte {node.Name}[{arrNode.Count} * 0x{instanceNode.MemorySize:X2}];");
-					writer.WriteLine();
-				} else {
-					if (arrNode.InnerNode is Utf8StringNode utf8) {
-						writer.WriteLine($"[FixedSizeArray<Utf8String>({arrNode.Count})]");
-                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] ");
-						writer.Write($"public fixed byte {node.Name}[{arrNode.Count} * 0x{utf8.MemorySize:X2}];");
-						writer.WriteLine();
-					} else if (arrNode.InnerNode is AtkValueNode valueNode) {
-                        writer.WriteLine($"[FixedSizeArray<AtkValue>({arrNode.Count})]");
-                        writer.Write($"[FieldOffset(0x{node.Offset:X2})] ");
-						writer.Write($"public fixed byte {node.Name}[{arrNode.Count} * 0x{valueNode.MemorySize:X2}];");
-						writer.WriteLine();
-					} else {
-						(type, _) = GetTypeDefinition(arrNode.InnerNode);
-						if (type == null) {
-							writer.WriteLine($"// Unhandled Array Node: {arrNode.InnerNode.GetType().Name}[] {arrNode.Name}");
-							continue;
-						}
-
-                        if (arrNode.InnerNode is BaseNumericNode) {
-                            writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed {type} {node.Name}[{arrNode.Count}];");
-                        } else {
-                            writer.Write($"[FieldOffset(0x{node.Offset:X2})] public fixed byte {node.Name}[{arrNode.Count} * 0x{arrNode.InnerNode.MemorySize:X2}];");
-                        }
-						writer.WriteLine();
-					}
-				}
-			} else {
-				logger.Log(LogLevel.Warning, $"Skipping node with unhandled type: 0x{node.Offset:X2} {node.GetType()}");
+				continue;
 			}
-		}
+
+            if (node is ArrayNode arrNode) {
+                (type, _) = GetTypeDefinition(arrNode.InnerNode);
+                if (type == null) {
+                    writer.WriteLine($"// 0x{node.Offset:X2} - Unhandled Array Node: {arrNode.InnerNode.GetType().Name}[] {arrNode.Name}");
+                    continue;
+                }
+                writer.WriteLine($"[FieldOffset(0x{node.Offset:X2}), FixedSizeArray] internal FixedSizeArray{arrNode.Count}<{type}> {MakeFixedArrayName(arrNode)};");
+            } else if (node is Utf8TextNode tn8) {
+                writer.Write($"[FieldOffset(0x{node.Offset:X2}), FixedSizeArray(isString: true)] internal ");
+                writer.WriteLine($"FixedSizeArray{tn8.Length}<byte> _{MakeFixedArrayName(node)};");
+            } else if (node is Utf16TextNode tn16) {
+                writer.Write($"[FieldOffset(0x{node.Offset:X2}), FixedSizeArray(isString: true)] internal ");
+                writer.WriteLine($"FixedSizeArray{tn16.Length}<char> _{MakeFixedArrayName(node)};");
+            } else if (node is Utf32TextNode tn32) {
+                writer.Write($"[FieldOffset(0x{node.Offset:X2}), FixedSizeArray(isString: true)] internal ");
+                writer.WriteLine($"FixedSizeArray{tn32.Length}<int> _{MakeFixedArrayName(node)};");
+            } else {
+                logger.Log(LogLevel.Warning, $"Skipping node with unhandled type: 0x{node.Offset:X2} {node.GetType()}");
+            }
+        }
 
 		writer.Indent--;
 		writer.WriteLine("}");
 	}
+
+    private static string MakeFixedArrayName(BaseNode node) {
+        if (string.IsNullOrWhiteSpace(node.Name)) return $"_node{node.Offset:X2}";
+        if (node.Name.Length is >= 1 and <= 3) return $"_{node.Name.ToLower()}";
+        return $"_{char.ToLower(node.Name[0])}{node.Name.Substring(1)}";
+    }
+
+    private static bool NodeNeedsInterop(BaseNode node) {
+        return node is ArrayNode or Utf8TextNode or Utf16TextNode or Utf32TextNode;
+    }
 
 	private static (string? typeName, string? attribute) GetTypeDefinition(BaseNode node) {
 		if (node is BitFieldNode bitFieldNode) {
@@ -194,15 +182,20 @@ public class CsCodeGenerator : ICodeGenerator {
 		switch (node) {
 			case ClassInstanceNode instanceNode:
 				return ($"{instanceNode.InnerNode.Name}", null);
-			case PointerNode { InnerNode: ClassInstanceNode cin }:
-				return ($"{cin.InnerNode.Name}*", null);
+			case PointerNode { IsWrapped: false} pnRaw:
+                if (pnRaw.InnerNode is ClassInstanceNode rawCin)
+                    return ($"{rawCin.InnerNode.Name}*", null);
+                var rawType = GetTypeDefinition(pnRaw.InnerNode);
+                return rawType.typeName == null ? (null, null) : ($"{rawType.typeName}*", null);
+            case PointerNode { IsWrapped: true} pnWrap:
+                var wrapType = GetTypeDefinition(pnWrap.InnerNode);
+                return wrapType.typeName == null ? (null, null) : ($"Pointer<{wrapType.typeName}>", null);
 			case VectorNode vector: {
 				if (vector.InnerNode is ClassInstanceNode cin)
 					return ($"StdVector<{cin.InnerNode.Name}>", null);
-				if (NodeTypeToTypeMap.TryGetValue(vector.InnerNode.GetType(), out var innerType) && !innerType.Contains("fixed"))
-					return ($"StdVector<{innerType}>", null);
-				return (null, null);
-			}
+                var vectorType = GetTypeDefinition(vector.InnerNode);
+                return vectorType.typeName == null ? (null, null) : ($"StdVector<{vectorType.typeName}>", null);
+            }
 		}
 
 		if (NodeTypeToTypeMap.TryGetValue(node.GetType(), out var type))
