@@ -58,8 +58,8 @@ public unsafe struct AtkUnitList {
 	public const int AllUnitsListOffset = 0x6900;
 
 	[FieldOffset(0x00)] public nint VFTable;
-	[FieldOffset(0x08)] public fixed ulong UnitArray[100];
-	[FieldOffset(0x808)] public int Length;
+	[FieldOffset(0x08)] public fixed ulong UnitArray[256];
+	[FieldOffset(0x808)] public ushort Length;
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x220)]
