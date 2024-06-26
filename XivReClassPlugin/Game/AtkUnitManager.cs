@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using ReClassNET;
+using ReClassNET.Nodes;
 
 namespace XivReClassPlugin.Game; 
 
@@ -42,15 +44,35 @@ public unsafe class Addon {
 	public bool Visible => UnitBase.IsVisible;
 	public ulong Address { get; }
 	public string Name { get; }
+	public int Size { get; }
+    public ulong VTableOffset { get; }
+    public string ClassName { get; }
 
 	public Addon(nint address, AtkUnitBase unitBase) {
 		Address = (ulong)address;
 		UnitBase = unitBase;
-		Name = Encoding.UTF8.GetString(unitBase.Name, 0x20);
-		var idx = Name.IndexOf('\0');
-		if (idx != -1)
-			Name = Name.Remove(idx);
+
+        Name = Encoding.UTF8.GetString(unitBase.Name, 0x20);
+        var idx = Name.IndexOf('\0');
+        if (idx != -1)
+            Name = Name.Remove(idx);
+
+        var vtable = Ffxiv.Memory.Read<nint>(address);
+        VTableOffset = (ulong)Ffxiv.Memory.GetMainModuleOffset(vtable);
+        ClassName = Ffxiv.Symbols.TryGetClassName(vtable, out var className, true) ? className : string.Empty;
+
+        Size = Ffxiv.Memory.TryGetSizeFromFunction(Ffxiv.Memory.Read<nint>(vtable + 0 * 8));
 	}
+
+    public ClassNode? CreateClassNode() {
+        if (Program.MainForm.CurrentProject.Classes.Any(c => c.Name.Equals(Name)))
+            return null;
+        var node = ClassNode.Create();
+        node.AddressFormula = $"<Addon({Name})>";
+        node.Name = $"Addon{Name}";
+        node.AddBytes(Math.Max(0x220, Size));
+        return node;
+    }
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x810)]
@@ -71,10 +93,10 @@ public unsafe struct AtkUnitBase {
 
 	[FieldOffset(0x160)] public nint AtkValues;
 	
-	[FieldOffset(0x182)] public byte Flags;
+	[FieldOffset(0x180)] public uint Flags;
 
-	[FieldOffset(0x1CC)] public ushort Id;
-	[FieldOffset(0x1CE)] public ushort ParentId;
+	[FieldOffset(0x1DC)] public ushort Id;
+	[FieldOffset(0x1DE)] public ushort ParentId;
 
-	public bool IsVisible => (Flags & 0x20) == 0x20;
+	public bool IsVisible => (Flags & 0x200000) != 0;
 }

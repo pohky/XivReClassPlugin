@@ -41,6 +41,16 @@ public class ModuleNamePatch {
             return false;
         }
 
+        if (Ffxiv.Address.Framework != 0 && name.Equals("AtkStage", StringComparison.OrdinalIgnoreCase)) {
+            __result = new Module { Start = Ffxiv.Address.AtkStage, Name = name };
+            return false;
+        }
+
+        if (Ffxiv.Address.Framework != 0 && name.Equals("AtkUnitManager", StringComparison.OrdinalIgnoreCase)) {
+            __result = new Module { Start = Ffxiv.Address.AtkUnitManager, Name = name };
+            return false;
+        }
+
         if (Ffxiv.Address.Framework != 0 && name.Equals("EventFramework", StringComparison.OrdinalIgnoreCase)) {
             __result = new Module { Start = Ffxiv.Address.EventFramework, Name = name };
             return false;

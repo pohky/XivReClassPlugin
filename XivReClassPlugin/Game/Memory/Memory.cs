@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Windows.Forms;
 using Iced.Intel;
 using ReClassNET.Memory;
 
@@ -14,6 +15,8 @@ public class Memory : MemoryAccess {
     public void Update() {
 		if (!Process.IsValid) {
 			MainModule = EmptyModule;
+            FreeMemoryFunc = 0;
+            FreeMemory2Func = 0;
             return;
         }
 		
@@ -26,16 +29,16 @@ public class Memory : MemoryAccess {
 
         FreeMemoryFunc = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("FreeMemory")).Key;
         if (FreeMemoryFunc == 0) {
-            // E8 ?? ?? ?? ?? 4C 63 7D
-            // bench: E8 ?? ?? ?? ?? 48 63 2E
-            FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 4C 63 7D");
+            // ew: E8 ?? ?? ?? ?? 48 C7 04
+            // dt: E8 ?? ?? ?? ?? 48 63 2E
+            FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 C7 04");
             if (FreeMemoryFunc == 0)
                 FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 63 2E");
         }
         FreeMemory2Func = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("FreeMemory_2")).Key;
         if (FreeMemory2Func == 0) {
-            // E8 ?? ?? ?? ?? 48 8B C3 48 83 C4 ?? 5F 5D
-            // bench: E8 ?? ?? ?? ?? 48 8B 6C 24 ?? 48 8B C7 48 8B 74 24 ?? 48 83 C4
+            // ew: E8 ?? ?? ?? ?? 48 8B C3 48 83 C4 ?? 5F 5D
+            // dt: E8 ?? ?? ?? ?? 48 8B 6C 24 ?? 48 8B C7 48 8B 74 24 ?? 48 83 C4
             FreeMemory2Func = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 8B C3 48 83 C4 ?? 5F 5D");
             if (FreeMemory2Func == 0)
                 FreeMemory2Func = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 8B 6C 24 ?? 48 8B C7 48 8B 74 24 ?? 48 83 C4");

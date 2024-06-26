@@ -67,8 +67,8 @@ public class AddressResolver {
 		var agentVf = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("UiModule.GetAgentModule", StringComparison.OrdinalIgnoreCase)).Key;
         if (agentVf == 0) {
             var uiModuleVt = Ffxiv.Memory.Read<nint>(uiModule);
-			// 36
-			// bench: 37
+			// ew: 36
+			// dt: 37
             agentVf = Ffxiv.Memory.Read<nint>(uiModuleVt + 37 * 8);
         }
 		if (agentVf == 0) return 0;
@@ -85,7 +85,7 @@ public class AddressResolver {
     private static nint ResolveAddress(nint address) {
         var mem = Program.RemoteProcess.ReadRemoteMemory(address, 8);
         if (mem == null) return 0;
-        if (mem[0] == 0xE8) {
+        if (mem[0] == 0xE8 || mem[0] == 0xE9) {
             var offset = BitConverter.ToInt32(mem, 1);
             if (offset == 0) return 0;
             return address + 5 + offset;

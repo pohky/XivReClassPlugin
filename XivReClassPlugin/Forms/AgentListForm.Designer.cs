@@ -23,205 +23,201 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			this.components = new System.ComponentModel.Container();
-			this.FlowPanelToolBar = new System.Windows.Forms.FlowLayoutPanel();
-			this.ButtonUpdateList = new System.Windows.Forms.Button();
-			this.CheckBoxHideInactive = new System.Windows.Forms.CheckBox();
-			this.TextBoxSearch = new System.Windows.Forms.TextBox();
-			this.ListUpdateTimer = new System.Windows.Forms.Timer(this.components);
-			this.ContextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this.CreateClassMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.CopyOffsetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.ShowAgentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.HideAgentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.ListViewAgents = new System.Windows.Forms.ListView();
-			this.ColumnHeaderId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ColumnHeaderAddon = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ColumnHeaderAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ColumnHeaderSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ColumnHeaderVTable = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.ColumnHeaderClass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.CopyAddressMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.FlowPanelToolBar.SuspendLayout();
-			this.ContextMenuMain.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// FlowPanelToolBar
-			// 
-			this.FlowPanelToolBar.AutoSize = true;
-			this.FlowPanelToolBar.Controls.Add(this.ButtonUpdateList);
-			this.FlowPanelToolBar.Controls.Add(this.CheckBoxHideInactive);
-			this.FlowPanelToolBar.Controls.Add(this.TextBoxSearch);
-			this.FlowPanelToolBar.Dock = System.Windows.Forms.DockStyle.Top;
-			this.FlowPanelToolBar.Location = new System.Drawing.Point(0, 0);
-			this.FlowPanelToolBar.Margin = new System.Windows.Forms.Padding(4);
-			this.FlowPanelToolBar.Name = "FlowPanelToolBar";
-			this.FlowPanelToolBar.Size = new System.Drawing.Size(1067, 36);
-			this.FlowPanelToolBar.TabIndex = 3;
-			// 
-			// ButtonUpdateList
-			// 
-			this.ButtonUpdateList.Location = new System.Drawing.Point(4, 4);
-			this.ButtonUpdateList.Margin = new System.Windows.Forms.Padding(4);
-			this.ButtonUpdateList.Name = "ButtonUpdateList";
-			this.ButtonUpdateList.Size = new System.Drawing.Size(100, 28);
-			this.ButtonUpdateList.TabIndex = 0;
-			this.ButtonUpdateList.Text = "Update";
-			this.ButtonUpdateList.UseVisualStyleBackColor = true;
-			this.ButtonUpdateList.Click += new System.EventHandler(this.ButtonUpdateList_Click);
-			// 
-			// CheckBoxHideInactive
-			// 
-			this.CheckBoxHideInactive.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.CheckBoxHideInactive.AutoSize = true;
-			this.CheckBoxHideInactive.Checked = true;
-			this.CheckBoxHideInactive.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckBoxHideInactive.Location = new System.Drawing.Point(112, 8);
-			this.CheckBoxHideInactive.Margin = new System.Windows.Forms.Padding(4);
-			this.CheckBoxHideInactive.Name = "CheckBoxHideInactive";
-			this.CheckBoxHideInactive.Size = new System.Drawing.Size(144, 20);
-			this.CheckBoxHideInactive.TabIndex = 1;
-			this.CheckBoxHideInactive.Text = "Hide without Addon";
-			this.CheckBoxHideInactive.UseVisualStyleBackColor = true;
-			// 
-			// TextBoxSearch
-			// 
-			this.TextBoxSearch.Location = new System.Drawing.Point(264, 4);
-			this.TextBoxSearch.Margin = new System.Windows.Forms.Padding(4);
-			this.TextBoxSearch.Name = "TextBoxSearch";
-			this.TextBoxSearch.Size = new System.Drawing.Size(292, 22);
-			this.TextBoxSearch.TabIndex = 2;
-			this.TextBoxSearch.TextChanged += new System.EventHandler(this.TextBoxSearch_TextChanged);
-			this.TextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxSearch_KeyDown);
-			// 
-			// ListUpdateTimer
-			// 
-			this.ListUpdateTimer.Enabled = true;
-			this.ListUpdateTimer.Interval = 250;
-			this.ListUpdateTimer.Tick += new System.EventHandler(this.ListUpdateTimer_Tick);
-			// 
-			// ContextMenuMain
-			// 
-			this.ContextMenuMain.ImageScalingSize = new System.Drawing.Size(20, 20);
-			this.ContextMenuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.components = new System.ComponentModel.Container();
+            this.FlowPanelToolBar = new System.Windows.Forms.FlowLayoutPanel();
+            this.ButtonUpdateList = new System.Windows.Forms.Button();
+            this.CheckBoxHideInactive = new System.Windows.Forms.CheckBox();
+            this.TextBoxSearch = new System.Windows.Forms.TextBox();
+            this.ListUpdateTimer = new System.Windows.Forms.Timer(this.components);
+            this.ContextMenuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.CreateClassMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CopyOffsetMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.CopyAddressMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.ShowAgentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.HideAgentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ListViewAgents = new System.Windows.Forms.ListView();
+            this.ColumnHeaderId = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ColumnHeaderAddon = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ColumnHeaderAddress = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ColumnHeaderSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ColumnHeaderVTable = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ColumnHeaderClass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.FlowPanelToolBar.SuspendLayout();
+            this.ContextMenuMain.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // FlowPanelToolBar
+            // 
+            this.FlowPanelToolBar.AutoSize = true;
+            this.FlowPanelToolBar.Controls.Add(this.ButtonUpdateList);
+            this.FlowPanelToolBar.Controls.Add(this.CheckBoxHideInactive);
+            this.FlowPanelToolBar.Controls.Add(this.TextBoxSearch);
+            this.FlowPanelToolBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this.FlowPanelToolBar.Location = new System.Drawing.Point(0, 0);
+            this.FlowPanelToolBar.Name = "FlowPanelToolBar";
+            this.FlowPanelToolBar.Size = new System.Drawing.Size(800, 29);
+            this.FlowPanelToolBar.TabIndex = 3;
+            // 
+            // ButtonUpdateList
+            // 
+            this.ButtonUpdateList.Location = new System.Drawing.Point(3, 3);
+            this.ButtonUpdateList.Name = "ButtonUpdateList";
+            this.ButtonUpdateList.Size = new System.Drawing.Size(75, 23);
+            this.ButtonUpdateList.TabIndex = 0;
+            this.ButtonUpdateList.Text = "Update";
+            this.ButtonUpdateList.UseVisualStyleBackColor = true;
+            this.ButtonUpdateList.Click += new System.EventHandler(this.ButtonUpdateList_Click);
+            // 
+            // CheckBoxHideInactive
+            // 
+            this.CheckBoxHideInactive.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.CheckBoxHideInactive.AutoSize = true;
+            this.CheckBoxHideInactive.Checked = true;
+            this.CheckBoxHideInactive.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CheckBoxHideInactive.Location = new System.Drawing.Point(84, 6);
+            this.CheckBoxHideInactive.Name = "CheckBoxHideInactive";
+            this.CheckBoxHideInactive.Size = new System.Drawing.Size(119, 17);
+            this.CheckBoxHideInactive.TabIndex = 1;
+            this.CheckBoxHideInactive.Text = "Hide without Addon";
+            this.CheckBoxHideInactive.UseVisualStyleBackColor = true;
+            // 
+            // TextBoxSearch
+            // 
+            this.TextBoxSearch.Location = new System.Drawing.Point(209, 3);
+            this.TextBoxSearch.Name = "TextBoxSearch";
+            this.TextBoxSearch.Size = new System.Drawing.Size(220, 20);
+            this.TextBoxSearch.TabIndex = 2;
+            this.TextBoxSearch.TextChanged += new System.EventHandler(this.TextBoxSearch_TextChanged);
+            this.TextBoxSearch.KeyDown += new System.Windows.Forms.KeyEventHandler(this.TextBoxSearch_KeyDown);
+            // 
+            // ListUpdateTimer
+            // 
+            this.ListUpdateTimer.Enabled = true;
+            this.ListUpdateTimer.Interval = 250;
+            this.ListUpdateTimer.Tick += new System.EventHandler(this.ListUpdateTimer_Tick);
+            // 
+            // ContextMenuMain
+            // 
+            this.ContextMenuMain.ImageScalingSize = new System.Drawing.Size(20, 20);
+            this.ContextMenuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.CreateClassMenuItem,
             this.CopyOffsetMenuItem,
             this.CopyAddressMenuItem,
             this.toolStripSeparator1,
             this.ShowAgentMenuItem,
             this.HideAgentMenuItem});
-			this.ContextMenuMain.Name = "ContextMenuMain";
-			this.ContextMenuMain.Size = new System.Drawing.Size(218, 130);
-			// 
-			// CreateClassMenuItem
-			// 
-			this.CreateClassMenuItem.Name = "CreateClassMenuItem";
-			this.CreateClassMenuItem.Size = new System.Drawing.Size(217, 24);
-			this.CreateClassMenuItem.Text = "Create Class";
-			this.CreateClassMenuItem.Click += new System.EventHandler(this.CreateClassMenuItem_Click);
-			// 
-			// CopyOffsetMenuItem
-			// 
-			this.CopyOffsetMenuItem.Name = "CopyOffsetMenuItem";
-			this.CopyOffsetMenuItem.Size = new System.Drawing.Size(217, 24);
-			this.CopyOffsetMenuItem.Text = "Copy VTable Offset";
-			this.CopyOffsetMenuItem.Click += new System.EventHandler(this.CopyOffsetMenuItem_Click);
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(214, 6);
-			// 
-			// ShowAgentMenuItem
-			// 
-			this.ShowAgentMenuItem.Name = "ShowAgentMenuItem";
-			this.ShowAgentMenuItem.Size = new System.Drawing.Size(217, 24);
-			this.ShowAgentMenuItem.Text = "Show Agent";
-			this.ShowAgentMenuItem.Click += new System.EventHandler(this.ShowAgentMenuItem_Click);
-			// 
-			// HideAgentMenuItem
-			// 
-			this.HideAgentMenuItem.Name = "HideAgentMenuItem";
-			this.HideAgentMenuItem.Size = new System.Drawing.Size(217, 24);
-			this.HideAgentMenuItem.Text = "Hide Agent";
-			this.HideAgentMenuItem.Click += new System.EventHandler(this.HideAgentMenuItem_Click);
-			// 
-			// ListViewAgents
-			// 
-			this.ListViewAgents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.ContextMenuMain.Name = "ContextMenuMain";
+            this.ContextMenuMain.Size = new System.Drawing.Size(185, 120);
+            // 
+            // CreateClassMenuItem
+            // 
+            this.CreateClassMenuItem.Name = "CreateClassMenuItem";
+            this.CreateClassMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.CreateClassMenuItem.Text = "Create Class";
+            this.CreateClassMenuItem.Click += new System.EventHandler(this.CreateClassMenuItem_Click);
+            // 
+            // CopyOffsetMenuItem
+            // 
+            this.CopyOffsetMenuItem.Name = "CopyOffsetMenuItem";
+            this.CopyOffsetMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.CopyOffsetMenuItem.Text = "Copy VTable Offset";
+            this.CopyOffsetMenuItem.Click += new System.EventHandler(this.CopyOffsetMenuItem_Click);
+            // 
+            // CopyAddressMenuItem
+            // 
+            this.CopyAddressMenuItem.Name = "CopyAddressMenuItem";
+            this.CopyAddressMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.CopyAddressMenuItem.Text = "Copy VTable Address";
+            this.CopyAddressMenuItem.Click += new System.EventHandler(this.CopyAddressMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(181, 6);
+            // 
+            // ShowAgentMenuItem
+            // 
+            this.ShowAgentMenuItem.Name = "ShowAgentMenuItem";
+            this.ShowAgentMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.ShowAgentMenuItem.Text = "Show Agent";
+            this.ShowAgentMenuItem.Click += new System.EventHandler(this.ShowAgentMenuItem_Click);
+            // 
+            // HideAgentMenuItem
+            // 
+            this.HideAgentMenuItem.Name = "HideAgentMenuItem";
+            this.HideAgentMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.HideAgentMenuItem.Text = "Hide Agent";
+            this.HideAgentMenuItem.Click += new System.EventHandler(this.HideAgentMenuItem_Click);
+            // 
+            // ListViewAgents
+            // 
+            this.ListViewAgents.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.ColumnHeaderId,
             this.ColumnHeaderAddon,
             this.ColumnHeaderAddress,
             this.ColumnHeaderSize,
             this.ColumnHeaderVTable,
             this.ColumnHeaderClass});
-			this.ListViewAgents.ContextMenuStrip = this.ContextMenuMain;
-			this.ListViewAgents.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.ListViewAgents.FullRowSelect = true;
-			this.ListViewAgents.GridLines = true;
-			this.ListViewAgents.HideSelection = false;
-			this.ListViewAgents.Location = new System.Drawing.Point(0, 36);
-			this.ListViewAgents.Name = "ListViewAgents";
-			this.ListViewAgents.Size = new System.Drawing.Size(1067, 518);
-			this.ListViewAgents.TabIndex = 4;
-			this.ListViewAgents.UseCompatibleStateImageBehavior = false;
-			this.ListViewAgents.View = System.Windows.Forms.View.Details;
-			this.ListViewAgents.VirtualMode = true;
-			this.ListViewAgents.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.ListViewAgents_RetrieveVirtualItem);
-			// 
-			// ColumnHeaderId
-			// 
-			this.ColumnHeaderId.Text = "ID";
-			// 
-			// ColumnHeaderAddon
-			// 
-			this.ColumnHeaderAddon.Text = "Addon";
-			this.ColumnHeaderAddon.Width = 200;
-			// 
-			// ColumnHeaderAddress
-			// 
-			this.ColumnHeaderAddress.Text = "Address";
-			this.ColumnHeaderAddress.Width = 130;
-			// 
-			// ColumnHeaderSize
-			// 
-			this.ColumnHeaderSize.Text = "Size";
-			this.ColumnHeaderSize.Width = 80;
-			// 
-			// ColumnHeaderVTable
-			// 
-			this.ColumnHeaderVTable.Text = "VTable";
-			this.ColumnHeaderVTable.Width = 130;
-			// 
-			// ColumnHeaderClass
-			// 
-			this.ColumnHeaderClass.Text = "Class";
-			this.ColumnHeaderClass.Width = 300;
-			// 
-			// CopyAddressMenuItem
-			// 
-			this.CopyAddressMenuItem.Name = "CopyAddressMenuItem";
-			this.CopyAddressMenuItem.Size = new System.Drawing.Size(217, 24);
-			this.CopyAddressMenuItem.Text = "Copy VTable Address";
-			this.CopyAddressMenuItem.Click += new System.EventHandler(this.CopyAddressMenuItem_Click);
-			// 
-			// AgentListForm
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1067, 554);
-			this.Controls.Add(this.ListViewAgents);
-			this.Controls.Add(this.FlowPanelToolBar);
-			this.Margin = new System.Windows.Forms.Padding(4);
-			this.Name = "AgentListForm";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Agent List";
-			this.FlowPanelToolBar.ResumeLayout(false);
-			this.FlowPanelToolBar.PerformLayout();
-			this.ContextMenuMain.ResumeLayout(false);
-			this.ResumeLayout(false);
-			this.PerformLayout();
+            this.ListViewAgents.ContextMenuStrip = this.ContextMenuMain;
+            this.ListViewAgents.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.ListViewAgents.FullRowSelect = true;
+            this.ListViewAgents.GridLines = true;
+            this.ListViewAgents.HideSelection = false;
+            this.ListViewAgents.Location = new System.Drawing.Point(0, 29);
+            this.ListViewAgents.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ListViewAgents.Name = "ListViewAgents";
+            this.ListViewAgents.Size = new System.Drawing.Size(800, 421);
+            this.ListViewAgents.TabIndex = 4;
+            this.ListViewAgents.UseCompatibleStateImageBehavior = false;
+            this.ListViewAgents.View = System.Windows.Forms.View.Details;
+            this.ListViewAgents.VirtualMode = true;
+            this.ListViewAgents.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.ListViewAgents_RetrieveVirtualItem);
+            // 
+            // ColumnHeaderId
+            // 
+            this.ColumnHeaderId.Text = "ID";
+            // 
+            // ColumnHeaderAddon
+            // 
+            this.ColumnHeaderAddon.Text = "Addon";
+            this.ColumnHeaderAddon.Width = 200;
+            // 
+            // ColumnHeaderAddress
+            // 
+            this.ColumnHeaderAddress.Text = "Address";
+            this.ColumnHeaderAddress.Width = 130;
+            // 
+            // ColumnHeaderSize
+            // 
+            this.ColumnHeaderSize.Text = "Size";
+            this.ColumnHeaderSize.Width = 80;
+            // 
+            // ColumnHeaderVTable
+            // 
+            this.ColumnHeaderVTable.Text = "VTable";
+            this.ColumnHeaderVTable.Width = 130;
+            // 
+            // ColumnHeaderClass
+            // 
+            this.ColumnHeaderClass.Text = "Class";
+            this.ColumnHeaderClass.Width = 300;
+            // 
+            // AgentListForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.ListViewAgents);
+            this.Controls.Add(this.FlowPanelToolBar);
+            this.Name = "AgentListForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.Text = "Agent List";
+            this.FlowPanelToolBar.ResumeLayout(false);
+            this.FlowPanelToolBar.PerformLayout();
+            this.ContextMenuMain.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
 
 		}
 
