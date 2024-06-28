@@ -32,7 +32,7 @@ public static class DataManager {
 			} catch (Exception ex) {
 				Data = new ClientStructsData();
 				Program.ShowException(ex);
-			}
+            }
 		}
 		UpdateClasses();
 	}

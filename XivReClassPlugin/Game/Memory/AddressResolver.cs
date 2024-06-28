@@ -25,22 +25,19 @@ public class AddressResolver {
 	}
 
 	private nint GetEventFramework() {
-		// 48 8B 2D ?? ?? ?? ?? 8B 48
-        if (!Ffxiv.Symbols.TryGetInstance("Client::Game::Event::EventFramework_Instance", out var efwPointer))
+		if (!Ffxiv.Symbols.TryGetInstance("Client::Game::Event::EventFramework_Instance", out var efwPointer))
             efwPointer = ResolveSig("48 8B 2D ?? ?? ?? ?? 8B 48");
         return efwPointer == 0 ? 0 : Ffxiv.Memory.Read<nint>(efwPointer);
     }
 
 	private nint GetFramework() {
-		// 48 8B 2D ?? ?? ?? ?? BA
 		if (!Ffxiv.Symbols.TryGetInstance("Client::System::Framework::Framework_InstancePointer2", out var fwPointer))
 			fwPointer = ResolveSig("48 8B 2D ?? ?? ?? ?? BA");
 		return fwPointer == 0 ? 0 : Ffxiv.Memory.Read<nint>(fwPointer);
     }
 
 	private nint GetAtkStage() {
-		// 4C 8B 15 ?? ?? ?? ?? 3C
-        if (!Ffxiv.Symbols.TryGetInstance("Component::GUI::AtkStage_Instance", out var atkStagePointer))
+		if (!Ffxiv.Symbols.TryGetInstance("Component::GUI::AtkStage_Instance", out var atkStagePointer))
             atkStagePointer = ResolveSig("4C 8B 15 ?? ?? ?? ?? 3C");
         return atkStagePointer == 0 ? 0 : Ffxiv.Memory.Read<nint>(atkStagePointer);
     }
@@ -53,9 +50,6 @@ public class AddressResolver {
 	private nint GetUiModule(nint framework) {
 		if (framework == 0) return 0;
 		var uiVf = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("Framework.GetUIModule", StringComparison.OrdinalIgnoreCase)).Key;
-        // E8 ?? ?? ?? ?? 33 DB 41 B9
-		// bench: E8 ?? ?? ?? ?? 44 0F B7 0F
-        if (uiVf == 0) uiVf = ResolveSig("E8 ?? ?? ?? ?? 33 DB 41 B9");
         if (uiVf == 0) uiVf = ResolveSig("E8 ?? ?? ?? ?? 44 0F B7 0F");
         if (uiVf == 0) return 0;
         var offset = Ffxiv.Memory.Read<int>(uiVf + 8 + 3);
@@ -67,8 +61,6 @@ public class AddressResolver {
 		var agentVf = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("UiModule.GetAgentModule", StringComparison.OrdinalIgnoreCase)).Key;
         if (agentVf == 0) {
             var uiModuleVt = Ffxiv.Memory.Read<nint>(uiModule);
-			// ew: 36
-			// dt: 37
             agentVf = Ffxiv.Memory.Read<nint>(uiModuleVt + 37 * 8);
         }
 		if (agentVf == 0) return 0;

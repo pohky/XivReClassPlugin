@@ -91,9 +91,9 @@ public unsafe struct AtkUnitBase {
 	
 	[FieldOffset(0xC8)] public nint RootNode;
 
-	[FieldOffset(0x160)] public nint AtkValues;
+	[FieldOffset(0x170)] public nint AtkValues;
 	
-	[FieldOffset(0x180)] public uint Flags;
+	[FieldOffset(0x190)] public uint Flags;
 
 	[FieldOffset(0x1DC)] public ushort Id;
 	[FieldOffset(0x1DE)] public ushort ParentId;
