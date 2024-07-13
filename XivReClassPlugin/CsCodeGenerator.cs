@@ -3,6 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using ReClassNET;
 using ReClassNET.CodeGenerator;
 using ReClassNET.Logger;
 using ReClassNET.Nodes;
@@ -137,6 +138,11 @@ public class CsCodeGenerator : ICodeGenerator {
 				continue;
 			}
 
+            if (node is PointerNode && type == null) {
+                logger.Log(LogLevel.Warning, $"Skipping node with unhandled type in class {node.GetParentClass().Name}: [{node.GetType().Name}] 0x{node.Offset:X2} {node.Name}");
+				continue;
+            }
+
             if (node is ArrayNode arrNode) {
                 (type, _) = GetTypeDefinition(arrNode.InnerNode);
                 if (type == null) {
@@ -154,7 +160,7 @@ public class CsCodeGenerator : ICodeGenerator {
                 writer.Write($"[FieldOffset(0x{node.Offset:X2}), FixedSizeArray(isString: true)] internal ");
                 writer.WriteLine($"FixedSizeArray{tn32.Length}<int> _{MakeFixedArrayName(node)};");
             } else {
-                logger.Log(LogLevel.Warning, $"Skipping node with unhandled type: 0x{node.Offset:X2} {node.GetType()}");
+                logger.Log(LogLevel.Warning, $"Skipping node with unhandled type in class {node.GetParentClass().Name}: [{node.GetType().Name}] 0x{node.Offset:X2} {node.Name}");
             }
         }
 
@@ -172,8 +178,8 @@ public class CsCodeGenerator : ICodeGenerator {
         return node is ArrayNode or Utf8TextNode or Utf16TextNode or Utf32TextNode;
     }
 
-	private static (string? typeName, string? attribute) GetTypeDefinition(BaseNode node) {
-		if (node is BitFieldNode bitFieldNode) {
+	private static (string? typeName, string? attribute) GetTypeDefinition(BaseNode? node) {
+        if (node is BitFieldNode bitFieldNode) {
 			var underlayingNode = bitFieldNode.GetUnderlayingNode();
 			underlayingNode.CopyFromNode(node);
 			node = underlayingNode;
@@ -196,6 +202,8 @@ public class CsCodeGenerator : ICodeGenerator {
                 var vectorType = GetTypeDefinition(vector.InnerNode);
                 return vectorType.typeName == null ? (null, null) : ($"StdVector<{vectorType.typeName}>", null);
             }
+			case null:
+                return (null, null);
 		}
 
 		if (NodeTypeToTypeMap.TryGetValue(node.GetType(), out var type))

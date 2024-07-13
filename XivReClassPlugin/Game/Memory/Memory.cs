@@ -23,7 +23,11 @@ public class Memory : MemoryAccess {
         if (MainModule != EmptyModule)
             return;
 
-		if (Process.EnumerateRemoteSectionsAndModules(out _, out var modules)) {
+        Reload();
+    }
+
+    public void Reload() {
+        if (Process.EnumerateRemoteSectionsAndModules(out _, out var modules)) {
             MainModule = modules.Find(m => m.Name.Equals(Process.UnderlayingProcess.Name));
         } else MainModule = EmptyModule;
 

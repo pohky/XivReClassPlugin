@@ -20,6 +20,7 @@ public static class Ffxiv {
 
 	public static void Reload() {
 		DataManager.Reload();
+		Memory.Reload();
 		Update();
 	}
 
