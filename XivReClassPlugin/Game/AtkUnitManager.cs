@@ -70,7 +70,7 @@ public unsafe class Addon {
 
 		var node = ClassNode.Create();
 		node.AddressFormula = $"<Addon({Name})>";
-		node.Name = $"Client::UI::Addon{Name}";
+		node.Name = !string.IsNullOrEmpty(ClassName) ? ClassName : $"Client::UI::Addon{Name}";
 
 		var atkUnitBaseNode = Program.MainForm.CurrentProject.Classes.FirstOrDefault(node => node.Name.Equals("Component::GUI::AtkUnitBase"));
 		if (atkUnitBaseNode != null) {
