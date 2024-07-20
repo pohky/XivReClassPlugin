@@ -58,7 +58,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 		node.AddressFormula = $"<Agent({AgentId})>";
 		node.Name = $"Client::UI::Agent::Agent{AgentId}";
 
-		if ((!string.IsNullOrWhiteSpace(Name) && AgentModule.AgentList.Count(a => a.Name.Equals(Name)) == 1) {
+		if ((!string.IsNullOrWhiteSpace(Name) && AgentModule.AgentList.Count(a => a.Name.Equals(Name)) == 1)) {
 			node.AddressFormula = $"<Agent({Name})>";
 			node.Name = $"Client::UI::Agent::{Name}";
 		}
@@ -66,7 +66,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 		if (!string.IsNullOrEmpty(ClassName))
 			node.Name = ClassName;
 
-		var agentInterfaceNode = Program.MainForm.CurrentProject.Classes.FirstOrDefault(node => node.Name.Equals("Client::UI::Agent::AgentInterface"));
+		var agentInterfaceNode = Program.MainForm.CurrentProject.Classes.FirstOrDefault(n => n.Name.Equals("Client::UI::Agent::AgentInterface"));
 		if (agentInterfaceNode != null) {
 			var instanceNode = new ClassInstanceNode();
 			instanceNode.ChangeInnerNode(agentInterfaceNode);
