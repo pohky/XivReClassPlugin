@@ -45,34 +45,47 @@ public unsafe class Addon {
 	public ulong Address { get; }
 	public string Name { get; }
 	public int Size { get; }
-    public ulong VTableOffset { get; }
-    public string ClassName { get; }
+	public ulong VTableOffset { get; }
+	public string ClassName { get; }
 
 	public Addon(nint address, AtkUnitBase unitBase) {
 		Address = (ulong)address;
 		UnitBase = unitBase;
 
-        Name = Encoding.UTF8.GetString(unitBase.Name, 0x20);
-        var idx = Name.IndexOf('\0');
-        if (idx != -1)
-            Name = Name.Remove(idx);
+		Name = Encoding.UTF8.GetString(unitBase.Name, 0x20);
+		var idx = Name.IndexOf('\0');
+		if (idx != -1)
+			Name = Name.Remove(idx);
 
-        var vtable = Ffxiv.Memory.Read<nint>(address);
-        VTableOffset = (ulong)Ffxiv.Memory.GetMainModuleOffset(vtable);
-        ClassName = Ffxiv.Symbols.TryGetClassName(vtable, out var className, true) ? className : string.Empty;
+		var vtable = Ffxiv.Memory.Read<nint>(address);
+		VTableOffset = (ulong)Ffxiv.Memory.GetMainModuleOffset(vtable);
+		ClassName = Ffxiv.Symbols.TryGetClassName(vtable, out var className, true) ? className : string.Empty;
 
-        Size = Ffxiv.Memory.TryGetSizeFromFunction(Ffxiv.Memory.Read<nint>(vtable + 0 * 8));
+		Size = Ffxiv.Memory.TryGetSizeFromFunction(Ffxiv.Memory.Read<nint>(vtable + 0 * 8));
 	}
 
-    public ClassNode? CreateClassNode() {
-        if (Program.MainForm.CurrentProject.Classes.Any(c => c.Name.Equals(Name)))
-            return null;
-        var node = ClassNode.Create();
-        node.AddressFormula = $"<Addon({Name})>";
-        node.Name = $"Addon{Name}";
-        node.AddBytes(Math.Max(0x220, Size));
-        return node;
-    }
+	public ClassNode? CreateClassNode() {
+		if (Program.MainForm.CurrentProject.Classes.Any(c => c.Name.Equals(Name)))
+			return null;
+
+		var node = ClassNode.Create();
+		node.AddressFormula = $"<Addon({Name})>";
+		node.Name = !string.IsNullOrEmpty(ClassName) ? ClassName : $"Client::UI::Addon{Name}";
+
+		var atkUnitBaseNode = Program.MainForm.CurrentProject.Classes.FirstOrDefault(node => node.Name.Equals("Component::GUI::AtkUnitBase"));
+		if (atkUnitBaseNode != null) {
+			var instanceNode = new ClassInstanceNode();
+			instanceNode.ChangeInnerNode(atkUnitBaseNode);
+			instanceNode.Name = "AtkUnitBase";
+			node.AddNode(instanceNode);
+			if (Size - 0x230 > 0)
+				node.AddBytes(Size - 0x230);
+		} else {
+			node.AddBytes(Math.Max(0x230, Size));
+		}
+
+		return node;
+	}
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x810)]
@@ -84,7 +97,7 @@ public unsafe struct AtkUnitList {
 	[FieldOffset(0x808)] public ushort Length;
 }
 
-[StructLayout(LayoutKind.Explicit, Size = 0x220)]
+[StructLayout(LayoutKind.Explicit, Size = 0x230)]
 public unsafe struct AtkUnitBase {
 	[FieldOffset(0x00)] public nint VFTable;
 	[FieldOffset(0x08)] public fixed byte Name[0x20];

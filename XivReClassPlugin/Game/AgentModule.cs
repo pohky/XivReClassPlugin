@@ -53,16 +53,31 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
 	public ClassNode? CreateClassNode() {
 		if (Program.MainForm.CurrentProject.Classes.Any(c => c.Name.Equals(Name)))
 			return null;
+
 		var node = ClassNode.Create();
 		node.AddressFormula = $"<Agent({AgentId})>";
-		node.Name = $"Agent{AgentId}";
-		if (!string.IsNullOrWhiteSpace(Name)) {
-			if (AgentModule.AgentList.Count(a => a.Name.Equals(Name)) == 1) {
-				node.AddressFormula = $"<Agent({Name})>";
-				node.Name = Name;
-			}
+		node.Name = $"Client::UI::Agent::Agent{AgentId}";
+
+		if ((!string.IsNullOrWhiteSpace(Name) && AgentModule.AgentList.Count(a => a.Name.Equals(Name)) == 1) {
+			node.AddressFormula = $"<Agent({Name})>";
+			node.Name = $"Client::UI::Agent::{Name}";
 		}
-		node.AddBytes(Math.Max(0x30, Size));
+
+		if (!string.IsNullOrEmpty(ClassName))
+			node.Name = ClassName;
+
+		var agentInterfaceNode = Program.MainForm.CurrentProject.Classes.FirstOrDefault(node => node.Name.Equals("Client::UI::Agent::AgentInterface"));
+		if (agentInterfaceNode != null) {
+			var instanceNode = new ClassInstanceNode();
+			instanceNode.ChangeInnerNode(agentInterfaceNode);
+			instanceNode.Name = "AgentInterface";
+			node.AddNode(instanceNode);
+			if (Size - 0x28 > 0)
+				node.AddBytes(Size - 0x28);
+		} else {
+			node.AddBytes(Math.Max(0x28, Size));
+		}
+
 		return node;
 	}
 
