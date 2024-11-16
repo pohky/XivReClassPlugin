@@ -78,10 +78,10 @@ public unsafe class Addon {
 			instanceNode.ChangeInnerNode(atkUnitBaseNode);
 			instanceNode.Name = "AtkUnitBase";
 			node.AddNode(instanceNode);
-			if (Size - 0x230 > 0)
-				node.AddBytes(Size - 0x230);
+			if (Size - 0x238 > 0)
+				node.AddBytes(Size - 0x238);
 		} else {
-			node.AddBytes(Math.Max(0x230, Size));
+			node.AddBytes(Math.Max(0x238, Size));
 		}
 
 		return node;
@@ -97,19 +97,19 @@ public unsafe struct AtkUnitList {
 	[FieldOffset(0x808)] public ushort Length;
 }
 
-[StructLayout(LayoutKind.Explicit, Size = 0x230)]
+[StructLayout(LayoutKind.Explicit, Size = 0x238)]
 public unsafe struct AtkUnitBase {
 	[FieldOffset(0x00)] public nint VFTable;
 	[FieldOffset(0x08)] public fixed byte Name[0x20];
 	
 	[FieldOffset(0xC8)] public nint RootNode;
 
-	[FieldOffset(0x170)] public nint AtkValues;
+	[FieldOffset(0x178)] public nint AtkValues;
 	
-	[FieldOffset(0x190)] public uint Flags;
+	[FieldOffset(0x198)] public uint Flags;
 
-	[FieldOffset(0x1DC)] public ushort Id;
-	[FieldOffset(0x1DE)] public ushort ParentId;
+	[FieldOffset(0x1E4)] public ushort Id;
+	[FieldOffset(0x1E6)] public ushort ParentId;
 
 	public bool IsVisible => (Flags & 0x200000) != 0;
 }
