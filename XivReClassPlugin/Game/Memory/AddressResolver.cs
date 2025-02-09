@@ -2,6 +2,7 @@
 using System.Linq;
 using ReClassNET;
 using ReClassNET.MemoryScanner;
+using XivReClassPlugin.Data;
 
 namespace XivReClassPlugin.Game.Memory;
 
@@ -13,6 +14,9 @@ public class AddressResolver {
 	public nint AtkUnitManager { get; private set; }
 	public nint EventFramework { get; private set; }
 
+	public nint ExcelSheetVtable { get; private set; }
+	public nint ExcelSheetListVtable { get; private set; }
+
 	public void Update() {
 		Framework = GetFramework();
 		UiModule = GetUiModule(Framework);
@@ -22,7 +26,23 @@ public class AddressResolver {
 		AtkUnitManager = GetAtkUnitManager(AtkStage);
 
 		EventFramework = GetEventFramework();
-	}
+
+        var sheet = GetExcelSheetVtables();
+        ExcelSheetVtable = sheet.Sheet;
+        ExcelSheetListVtable = sheet.LinkList;
+    }
+    
+    private (nint Sheet, nint LinkList) GetExcelSheetVtables() {
+        const string className = "Common::Component::Excel::ExcelSheet";
+        const string listName = "Common::Component::Excel::LinkList<ExcelSheet>";
+        const string interfaceName = "Common::Component::Excel::ExcelSheetInterface";
+        var ifc = DataManager.Classes.FirstOrDefault(c => c.FullName == className && c.ParentClass?.FullName == interfaceName);
+        var lc = DataManager.Classes.FirstOrDefault(c => c.FullName == className && c.ParentClass?.FullName == listName);
+        if (ifc == null || lc == null) return (0, 0);
+        var sheetAddr = Ffxiv.Memory.MainModule.Start + (int)ifc.Offset;
+        var listAddr = Ffxiv.Memory.MainModule.Start + (int)lc.Offset;
+        return (sheetAddr, listAddr);
+    }
 
 	private nint GetEventFramework() {
 		if (!Ffxiv.Symbols.TryGetInstance("Client::Game::Event::EventFramework_Instance", out var efwPointer))

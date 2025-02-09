@@ -23,14 +23,17 @@ public class XivClassNodeReader : INodeInfoReader {
             if (!Ffxiv.Settings.ShowExcelSheetNames)
                 return $"-> {className}";
 
-            if (!className.EndsWith("ExcelSheet"))
+            if (Ffxiv.Address.ExcelSheetVtable == 0 || Ffxiv.Address.ExcelSheetListVtable == 0)
                 return $"-> {className}";
 
             var sheet = new ExcelSheet(nodeValue);
+            if (!sheet.IsValid)
+                return $"-> {className}";
+
             var sheetName = sheet.Name;
             if (string.IsNullOrEmpty(sheetName))
                 return $"-> {className}";
-            if(sheet.IsLinkedList)
+            if (sheet.IsLinkedList)
                 return $"-> LinkList<ExcelSheet>({sheetName})";
             return $"-> ExcelSheet({sheetName})";
         }
