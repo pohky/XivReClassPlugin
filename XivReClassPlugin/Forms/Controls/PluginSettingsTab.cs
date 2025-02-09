@@ -43,8 +43,16 @@ public partial class PluginSettingsTab : UserControl {
         CheckBoxShowExcelSheet.Checked = Ffxiv.Settings.ShowExcelSheetNames;
         CheckBoxShowExcelSheet.CheckedChanged += CheckBoxShowExcelSheetOnCheckedChanged;
 
+        CheckBoxDecodeStrings.Checked = Ffxiv.Settings.DecodeUtf8Strings;
+        CheckBoxDecodeStrings.CheckedChanged += CheckBoxDecodeStringsOnCheckedChanged;
+
         const string sizeWarningText = @"NOTE: increased chance for wrong guesses in some cases.";
         ConfigToolTip.SetToolTip(CheckBoxGuessEventInterfaces, sizeWarningText);
+    }
+
+    private void CheckBoxDecodeStringsOnCheckedChanged(object sender, EventArgs e) {
+        if (sender is CheckBox cb)
+            Ffxiv.Settings.DecodeUtf8Strings = cb.Checked;
     }
 
     private void CheckBoxShowExcelSheetOnCheckedChanged(object sender, EventArgs e) {

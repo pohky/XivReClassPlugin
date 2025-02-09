@@ -52,6 +52,7 @@ namespace XivReClassPlugin.Forms.Controls
             this.CheckBoxShowOffset = new System.Windows.Forms.CheckBox();
             this.CheckBoxNamespacePointer = new System.Windows.Forms.CheckBox();
             this.ConfigToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.CheckBoxDecodeStrings = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.mainTableLayoutPanel.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -151,6 +152,7 @@ namespace XivReClassPlugin.Forms.Controls
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.CheckBoxDecodeStrings);
             this.panel1.Controls.Add(this.CheckBoxInheritancePointer);
             this.panel1.Controls.Add(this.GroupBoxClassSize);
             this.panel1.Controls.Add(this.GroupBoxClassNames);
@@ -306,6 +308,16 @@ namespace XivReClassPlugin.Forms.Controls
             this.CheckBoxNamespacePointer.Text = "Include Namespace on Pointers";
             this.CheckBoxNamespacePointer.UseVisualStyleBackColor = true;
             // 
+            // CheckBoxDecodeStrings
+            // 
+            this.CheckBoxDecodeStrings.AutoSize = true;
+            this.CheckBoxDecodeStrings.Location = new System.Drawing.Point(227, 3);
+            this.CheckBoxDecodeStrings.Name = "CheckBoxDecodeStrings";
+            this.CheckBoxDecodeStrings.Size = new System.Drawing.Size(152, 17);
+            this.CheckBoxDecodeStrings.TabIndex = 21;
+            this.CheckBoxDecodeStrings.Text = "Decode Utf8String Macros";
+            this.CheckBoxDecodeStrings.UseVisualStyleBackColor = true;
+            // 
             // PluginSettingsTab
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,5 +362,6 @@ namespace XivReClassPlugin.Forms.Controls
         private System.Windows.Forms.CheckBox CheckBoxShowOffset;
         private System.Windows.Forms.CheckBox CheckBoxNamespacePointer;
         private System.Windows.Forms.CheckBox CheckBoxInheritancePointer;
+        private System.Windows.Forms.CheckBox CheckBoxDecodeStrings;
     }
 }

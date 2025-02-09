@@ -22,6 +22,8 @@ public class XivPluginSettings {
 
     public bool GuessClassSizes = true;
     public bool TryGetSizeForEventInterfaces = false;
+
+    public bool DecodeUtf8Strings = true;
 	
 	public static XivPluginSettings Load() {
 		if (!File.Exists(SettingsPath))

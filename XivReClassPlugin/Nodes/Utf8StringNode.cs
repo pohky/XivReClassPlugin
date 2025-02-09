@@ -1,9 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Text;
 using ReClassNET.Controls;
 using ReClassNET.Extensions;
 using ReClassNET.Nodes;
 using ReClassNET.UI;
+using XivReClassPlugin.Game;
 using XivReClassPlugin.Resources;
 
 namespace XivReClassPlugin.Nodes; 
@@ -27,8 +29,21 @@ public class Utf8StringNode : BaseTextPtrNode {
 			return DrawHidden(context, x, y);
 
 		var ptr = context.Memory.ReadIntPtr(Offset);
-		var text = context.Process.ReadRemoteString(ptr, Encoding, 2048) ?? string.Empty;
-
+        var rawlen = (int)context.Memory.ReadInt64(Offset + 0x10);
+        var strlen = rawlen > 2048 ? 2048 : rawlen;
+        
+        string text;
+        if (Ffxiv.Settings.DecodeUtf8Strings) {
+            try {
+                var data = context.Process.ReadRemoteMemory(ptr, strlen) ?? [];
+                text = Utf8Decoder.DecodeString(data);
+            } catch (Exception ex) {
+                text = $"Invalid Utf8String: {ex.Message}";
+            }
+        } else {
+            text = context.Process.ReadRemoteString(ptr, Encoding, strlen) ?? string.Empty;
+        }
+        
 		var origX = x;
 
 		AddSelection(context, x, y, context.Font.Height);
