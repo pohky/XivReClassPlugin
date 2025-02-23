@@ -27,7 +27,7 @@ public class AtkValueNode : BaseWrapperNode {
 	};
 
 	public AtkValueNode() {
-		var vectorNode = VectorNode.Create(new Hex64Node());
+		var vectorNode = StdVectorNode.Create(new Hex64Node());
 		var pointerNode = new PointerNode { Offset = 8 };
 		pointerNode.ChangeInnerNode(vectorNode);
 		m_NodeMap.Add(AtkValueType.Vector, pointerNode);

@@ -196,7 +196,7 @@ public class CsCodeGenerator : ICodeGenerator {
             case PointerNode { IsWrapped: true} pnWrap:
                 var wrapType = GetTypeDefinition(pnWrap.InnerNode);
                 return wrapType.typeName == null ? (null, null) : ($"Pointer<{wrapType.typeName}>", null);
-			case VectorNode vector: {
+			case StdVectorNode vector: {
 				if (vector.InnerNode is ClassInstanceNode cin)
 					return ($"StdVector<{cin.InnerNode.Name}>", null);
                 var vectorType = GetTypeDefinition(vector.InnerNode);

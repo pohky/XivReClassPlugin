@@ -130,7 +130,7 @@ public sealed class XivReClassPluginExt : Plugin {
 		return new CustomNodeTypes {
 			NodeTypes = new[] {
 				typeof(Utf8StringNode),
-				typeof(VectorNode),
+				typeof(StdVectorNode),
 				typeof(AtkValueNode)
 			},
 			Serializer = new XivNodeSerializer(),

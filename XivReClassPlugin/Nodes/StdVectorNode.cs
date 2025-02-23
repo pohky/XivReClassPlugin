@@ -8,16 +8,16 @@ using XivReClassPlugin.Resources;
 
 namespace XivReClassPlugin.Nodes; 
 
-public class VectorNode : BaseWrapperArrayNode {
+public class StdVectorNode : BaseWrapperArrayNode {
 	public override int MemorySize => IntPtr.Size * 3;
 	public long TotalSize { get; private set; }
 
-	public VectorNode() {
+	public StdVectorNode() {
 		IsReadOnly = true;
 	}
 
 	public override void GetUserInterfaceInfo(out string name, out Image icon) {
-		name = "Vector<T>";
+		name = "StdVector<T>";
 		icon = XivReClassResources.StdVectorIcon;
 	}
 
@@ -42,8 +42,8 @@ public class VectorNode : BaseWrapperArrayNode {
 		ChangeInnerNode(new Hex64Node());
 	}
 
-	public static VectorNode Create(BaseNode innerNode) {
-		var node = new VectorNode();
+	public static StdVectorNode Create(BaseNode innerNode) {
+		var node = new StdVectorNode();
 		node.ChangeInnerNode(innerNode);
 		return node;
 	}
@@ -67,10 +67,10 @@ public class VectorNode : BaseWrapperArrayNode {
 	public override Size Draw(DrawContext context, int x, int y) {
 		UpdateSizeAndCount(context);
 		var name = InnerNode switch {
-			BaseClassWrapperNode wrapper => $"Vector<{wrapper.InnerNode.Name}>",
-			PointerNode { InnerNode: ClassInstanceNode pointerClass } => $"Vector<{pointerClass.InnerNode.Name}*>",
-			ArrayNode { InnerNode: ClassInstanceNode arrayClass } => $"Vector<{arrayClass.InnerNode.GetType().Name.Replace("Node", string.Empty)}[]>",
-			_ => $"Vector<{InnerNode.GetType().Name.Replace("Node", string.Empty)}>"
+			BaseClassWrapperNode wrapper => $"StdVector<{wrapper.InnerNode.Name}>",
+			PointerNode { InnerNode: ClassInstanceNode pointerClass } => $"StdVector<{pointerClass.InnerNode.Name}*>",
+			ArrayNode { InnerNode: ClassInstanceNode arrayClass } => $"StdVector<{arrayClass.InnerNode.GetType().Name.Replace("Node", string.Empty)}[]>",
+			_ => $"StdVector<{InnerNode.GetType().Name.Replace("Node", string.Empty)}>"
 		};
 		return CustomDraw(context, x, y, name);
 		//return Draw(context, x, y, "Vector");
