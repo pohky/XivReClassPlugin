@@ -21,7 +21,6 @@ public class Utf8StringNode : BaseTextPtrNode {
 
 	public override Size Draw(DrawContext context, int x, int y) {
 		return CustomDraw(context, x, y, "UTF8");
-		//return DrawText(context, x, y, "UTF8");
 	}
 
 	private Size CustomDraw(DrawContext context, int x, int y, string typeName) {
@@ -30,16 +29,11 @@ public class Utf8StringNode : BaseTextPtrNode {
 
 		var ptr = context.Memory.ReadIntPtr(Offset);
         var rawlen = (int)context.Memory.ReadInt64(Offset + 0x10);
-        var strlen = rawlen > 2048 ? 2048 : rawlen;
+        var strlen = Math.Min(rawlen, 1024);
         
         string text;
         if (Ffxiv.Settings.DecodeUtf8Strings) {
-            try {
-                var data = context.Process.ReadRemoteMemory(ptr, strlen) ?? [];
-                text = Utf8Decoder.DecodeString(data);
-            } catch (Exception ex) {
-                text = $"Invalid Utf8String: {ex.Message}";
-            }
+            text = ReadUtf8String(context, ptr, strlen);
         } else {
             text = context.Process.ReadRemoteString(ptr, Encoding, strlen) ?? string.Empty;
         }
@@ -69,4 +63,24 @@ public class Utf8StringNode : BaseTextPtrNode {
 
 		return new Size(x - origX, context.Font.Height);
 	}
+
+    private string ReadUtf8String(DrawContext context, nint address, int length) {
+        var data = context.Process.ReadRemoteMemory(address, length) ?? [];
+        if (data.Length == 0) return string.Empty;
+        try {
+            var text = Utf8Decoder.DecodeString(data);
+            var sb = new StringBuilder(text);
+            for (var i = 0; i < sb.Length; ++i) {
+                if (sb[i] == '\0') {
+                    sb.Length = i;
+                    break;
+                }
+                if (!sb[i].IsPrintable())
+                    sb[i] = '.';
+            }
+            return sb.ToString();
+        } catch (Exception) {
+            return context.Process.ReadRemoteString(address, Encoding, length);
+        }
+    }
 }
