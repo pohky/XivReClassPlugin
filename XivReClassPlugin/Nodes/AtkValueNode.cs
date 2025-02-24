@@ -63,22 +63,22 @@ public class AtkValueNode : BaseWrapperNode {
 	}
 
 	private string ReadValueString(DrawContext context, AtkValueType type) {
-		return type switch {
-			AtkValueType.Undefined => string.Empty,
-			AtkValueType.Null => string.Empty,
-			AtkValueType.Bool => $"{context.Memory.ReadInt8(Offset + 8) != 0}",
-			AtkValueType.Int => $"{context.Memory.ReadInt32(Offset + 8)}",
-			AtkValueType.Int64 => $"{context.Memory.ReadInt64(Offset + 8)}",
-			AtkValueType.UInt => $"{context.Memory.ReadUInt32(Offset + 8)}",
-			AtkValueType.UInt64 => $"{context.Memory.ReadUInt64(Offset + 8)}",
-			AtkValueType.Float => $"{context.Memory.ReadFloat(Offset + 8)}",
-			AtkValueType.String => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
-			AtkValueType.WideString => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.Unicode, 256)}'",
-			AtkValueType.String8 => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
-			AtkValueType.ManagedString => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
-			_ => $"0x{context.Memory.ReadIntPtr(Offset + 8).ToInt64():X8}"
-		};
-	}
+        return type switch {
+            AtkValueType.Undefined => string.Empty,
+            AtkValueType.Null => string.Empty,
+            AtkValueType.Bool => $"{context.Memory.ReadInt8(Offset + 8) != 0}",
+            AtkValueType.Int => $"{context.Memory.ReadInt32(Offset + 8)}",
+            AtkValueType.Int64 => $"{context.Memory.ReadInt64(Offset + 8)}",
+            AtkValueType.UInt => $"{context.Memory.ReadUInt32(Offset + 8)}",
+            AtkValueType.UInt64 => $"{context.Memory.ReadUInt64(Offset + 8)}",
+            AtkValueType.Float => $"{context.Memory.ReadFloat(Offset + 8)}",
+            AtkValueType.String => $"'{Utf8StringNode.ReadUtf8String(context, context.Memory.ReadIntPtr(Offset + 8), 256)}'",
+            AtkValueType.WideString => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.Unicode, 256)}'",
+            AtkValueType.String8 => $"'{Utf8StringNode.ReadUtf8String(context, context.Memory.ReadIntPtr(Offset + 8), 256)}'",
+            AtkValueType.ManagedString => $"'{Utf8StringNode.ReadUtf8String(context, context.Memory.ReadIntPtr(Offset + 8), 256)}'",
+            _ => $"0x{context.Memory.ReadIntPtr(Offset + 8).ToInt64():X8}"
+        };
+    }
 
 	public override Size Draw(DrawContext context, int x, int y) {
 		if (IsHidden && !IsWrapped)
