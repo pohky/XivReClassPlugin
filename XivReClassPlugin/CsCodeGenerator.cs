@@ -179,7 +179,7 @@ public class CsCodeGenerator : ICodeGenerator {
     }
 
 	private static (string? typeName, string? attribute) GetTypeDefinition(BaseNode? node) {
-        if (node is BitFieldNode bitFieldNode) {
+		if (node is BitFieldNode bitFieldNode) {
 			var underlayingNode = bitFieldNode.GetUnderlayingNode();
 			underlayingNode.CopyFromNode(node);
 			node = underlayingNode;
@@ -189,21 +189,27 @@ public class CsCodeGenerator : ICodeGenerator {
 			case ClassInstanceNode instanceNode:
 				return ($"{instanceNode.InnerNode.Name}", null);
 			case PointerNode { IsWrapped: false} pnRaw:
-                if (pnRaw.InnerNode is ClassInstanceNode rawCin)
-                    return ($"{rawCin.InnerNode.Name}*", null);
-                var rawType = GetTypeDefinition(pnRaw.InnerNode);
-                return rawType.typeName == null ? (null, null) : ($"{rawType.typeName}*", null);
-            case PointerNode { IsWrapped: true} pnWrap:
-                var wrapType = GetTypeDefinition(pnWrap.InnerNode);
-                return wrapType.typeName == null ? (null, null) : ($"Pointer<{wrapType.typeName}>", null);
+				if (pnRaw.InnerNode is ClassInstanceNode rawCin)
+					return ($"{rawCin.InnerNode.Name}*", null);
+				var rawType = GetTypeDefinition(pnRaw.InnerNode);
+				return rawType.typeName == null ? (null, null) : ($"{rawType.typeName}*", null);
+			case PointerNode { IsWrapped: true} pnWrap:
+				var wrapType = GetTypeDefinition(pnWrap.InnerNode);
+				return wrapType.typeName == null ? (null, null) : ($"Pointer<{wrapType.typeName}>", null);
+			case StdListNode list: {
+				if (list.InnerNode is ClassInstanceNode cin)
+					return ($"StdList<{cin.InnerNode.Name}>", null);
+				var listType = GetTypeDefinition(list.InnerNode);
+				return listType.typeName == null ? (null, null) : ($"StdList<{listType.typeName}>", null);
+			}
 			case StdVectorNode vector: {
 				if (vector.InnerNode is ClassInstanceNode cin)
 					return ($"StdVector<{cin.InnerNode.Name}>", null);
-                var vectorType = GetTypeDefinition(vector.InnerNode);
-                return vectorType.typeName == null ? (null, null) : ($"StdVector<{vectorType.typeName}>", null);
-            }
+				var vectorType = GetTypeDefinition(vector.InnerNode);
+				return vectorType.typeName == null ? (null, null) : ($"StdVector<{vectorType.typeName}>", null);
+			}
 			case null:
-                return (null, null);
+				return (null, null);
 		}
 
 		if (NodeTypeToTypeMap.TryGetValue(node.GetType(), out var type))
