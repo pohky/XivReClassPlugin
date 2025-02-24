@@ -124,6 +124,9 @@
   <data name="CSharpIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>csharpicon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="StdDequeIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>StdDequeIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="StdListIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>StdListIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

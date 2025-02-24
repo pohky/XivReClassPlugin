@@ -196,6 +196,12 @@ public class CsCodeGenerator : ICodeGenerator {
 			case PointerNode { IsWrapped: true} pnWrap:
 				var wrapType = GetTypeDefinition(pnWrap.InnerNode);
 				return wrapType.typeName == null ? (null, null) : ($"Pointer<{wrapType.typeName}>", null);
+			case StdDequeNode deque: {
+				if (deque.InnerNode is ClassInstanceNode cin)
+					return ($"StdDeque<{cin.InnerNode.Name}>", null);
+				var dequeType = GetTypeDefinition(deque.InnerNode);
+				return dequeType.typeName == null ? (null, null) : ($"StdDeque<{dequeType.typeName}>", null);
+			}
 			case StdListNode list: {
 				if (list.InnerNode is ClassInstanceNode cin)
 					return ($"StdList<{cin.InnerNode.Name}>", null);

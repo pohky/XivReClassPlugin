@@ -9,6 +9,7 @@ namespace XivReClassPlugin.Nodes;
 
 public class XivNodeSerializer : ICustomNodeSerializer {
 	private const string Utf8StringType = "FFXIV::Utf8String";
+	private const string StdDequeType = "FFXIV::StdDeque";
 	private const string StdListType = "FFXIV::StdList";
 	private const string StdVectorType = "FFXIV::StdVector";
 	private const string AtkValueType = "FFXIV::AtkValue";
@@ -16,6 +17,7 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public bool CanHandleNode(BaseNode node) {
 		return node switch {
 			Utf8StringNode => true,
+			StdDequeNode => true,
 			StdListNode => true,
 			StdVectorNode => true,
 			AtkValueNode => true,
@@ -26,6 +28,7 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public bool CanHandleElement(XElement element) {
 		return element.Attribute(ReClassNetFile.XmlTypeAttribute)?.Value switch {
 			Utf8StringType => true,
+			StdDequeType => true,
 			StdListType => true,
 			StdVectorType => true,
 			AtkValueType => true,
@@ -36,6 +39,7 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public BaseNode CreateNodeFromElement(XElement element, BaseNode parent, IEnumerable<ClassNode> classes, ILogger logger, CreateNodeFromElementHandler defaultHandler) {
 		return element.Attribute(ReClassNetFile.XmlTypeAttribute)?.Value switch {
 			Utf8StringType => new Utf8StringNode(),
+			StdDequeType => new StdDequeNode(),
 			StdListType => new StdListNode(),
 			StdVectorType => new StdVectorNode(),
 			AtkValueType => new AtkValueNode(),
@@ -46,6 +50,7 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public XElement CreateElementFromNode(BaseNode node, ILogger logger, CreateElementFromNodeHandler defaultHandler) {
 		return node switch {
 			Utf8StringNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, Utf8StringType)),
+			StdDequeNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdDequeType)),
 			StdListNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdListType)),
 			StdVectorNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdVectorType)),
 			AtkValueNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, AtkValueType)),
