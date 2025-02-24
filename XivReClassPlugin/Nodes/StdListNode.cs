@@ -1,24 +1,24 @@
-﻿using System;
-using System.Drawing;
-using ReClassNET.Controls;
+﻿using ReClassNET.Controls;
+using ReClassNET.Extensions;
 using ReClassNET.Memory;
 using ReClassNET.Nodes;
 using ReClassNET.UI;
+using System;
+using System.Drawing;
 using XivReClassPlugin.Resources;
 
-namespace XivReClassPlugin.Nodes; 
+namespace XivReClassPlugin.Nodes;
 
-public class VectorNode : BaseWrapperArrayNode {
-	public override int MemorySize => IntPtr.Size * 3;
-	public long TotalSize { get; private set; }
+public class StdListNode : BaseWrapperArrayNode {
+	public override int MemorySize => IntPtr.Size + sizeof(long);
 
-	public VectorNode() {
+	public StdListNode() {
 		IsReadOnly = true;
 	}
 
 	public override void GetUserInterfaceInfo(out string name, out Image icon) {
-		name = "Vector<T>";
-		icon = XivReClassResources.StdVectorIcon;
+		name = "StdList<T>";
+		icon = XivReClassResources.StdListIcon;
 	}
 
 	//public override void CopyFromNode(BaseNode node) {
@@ -42,46 +42,48 @@ public class VectorNode : BaseWrapperArrayNode {
 		ChangeInnerNode(new Hex64Node());
 	}
 
-	public static VectorNode Create(BaseNode innerNode) {
-		var node = new VectorNode();
+	public static StdListNode Create(BaseNode innerNode) {
+		var node = new StdListNode();
 		node.ChangeInnerNode(innerNode);
 		return node;
 	}
 
-	private void UpdateSizeAndCount(DrawContext context) {
-		var start = context.Memory.ReadIntPtr(Offset);
-		var end = context.Memory.ReadIntPtr(Offset + IntPtr.Size);
-		var size = end.ToInt64() - start.ToInt64();
-		if (size <= 0 || InnerNode.MemorySize <= 0) {
-			TotalSize = 0;
-			Count = 0;
-			return;
-		}
-
-		var cnt = size / InnerNode.MemorySize;
-		cnt = cnt >= int.MaxValue ? int.MaxValue - 1 : cnt;
-		TotalSize = size;
-		Count = (int)(cnt < 0 ? 0 : cnt);
-	}
-
 	public override Size Draw(DrawContext context, int x, int y) {
-		UpdateSizeAndCount(context);
+		Count = (int)context.Memory.ReadInt64(Offset + IntPtr.Size);
 		var name = InnerNode switch {
-			BaseClassWrapperNode wrapper => $"Vector<{wrapper.InnerNode.Name}>",
-			PointerNode { InnerNode: ClassInstanceNode pointerClass } => $"Vector<{pointerClass.InnerNode.Name}*>",
-			ArrayNode { InnerNode: ClassInstanceNode arrayClass } => $"Vector<{arrayClass.InnerNode.GetType().Name.Replace("Node", string.Empty)}[]>",
-			_ => $"Vector<{InnerNode.GetType().Name.Replace("Node", string.Empty)}>"
+			BaseClassWrapperNode wrapper => $"StdList<{wrapper.InnerNode.Name}>",
+			PointerNode { InnerNode: ClassInstanceNode pointerClass } => $"StdList<{pointerClass.InnerNode.Name}*>",
+			ArrayNode { InnerNode: ClassInstanceNode arrayClass } => $"StdList<{arrayClass.InnerNode.GetType().Name.Replace("Node", string.Empty)}[]>",
+			_ => $"StdList<{InnerNode.GetType().Name.Replace("Node", string.Empty)}>"
 		};
 		return CustomDraw(context, x, y, name);
-		//return Draw(context, x, y, "Vector");
+		//return Draw(context, x, y, "List");
 	}
 
 	protected override Size DrawChild(DrawContext context, int x, int y) {
 		var innerContext = context.Clone();
 
-		innerContext.Address = context.Memory.ReadIntPtr(Offset) + InnerNode.MemorySize * CurrentIndex;
+		var _head = context.Memory.ReadIntPtr(Offset);
+		var _current = _head;
+
+		for (var j = 0; j <= CurrentIndex; j++) {
+			var next = context.Process.ReadRemoteIntPtr(_current);
+			if (_head == IntPtr.Zero || next == _head)
+				break;
+
+			_current = next;
+		}
+
+		int valueOffset = IntPtr.Size * 2; // next and previous
+		int valueSize = InnerNode.MemorySize;
+		int alignment = valueSize > 8 ? 8 : valueSize;
+		int remainder = valueOffset % alignment;
+		if (remainder != 0)
+			valueOffset += alignment - remainder;
+
+		innerContext.Address = _current + valueOffset;
 		innerContext.Memory = new MemoryBuffer {
-			Size = InnerNode.MemorySize,
+			Size = valueSize,
 			Offset = 0
 		};
 		innerContext.Memory.UpdateFrom(context.Process, innerContext.Address);
@@ -117,7 +119,7 @@ public class VectorNode : BaseWrapperArrayNode {
 		x = AddText(context, x, y, context.Settings.IndexColor, HotSpot.NoneId, ")");
 		x = AddIcon(context, x, y, context.IconProvider.RightArrow, 3, HotSpotType.Click) + context.Font.Width;
 
-		x = AddText(context, x, y, context.Settings.ValueColor, HotSpot.NoneId, $"<Size={TotalSize}>") + context.Font.Width;
+		//x = AddText(context, x, y, context.Settings.ValueColor, HotSpot.NoneId, $"<Size={MemorySize}>") + context.Font.Width;
 		x = AddIcon(context, x + 2, y, context.IconProvider.Change, 4, HotSpotType.ChangeWrappedType);
 
 		x += context.Font.Width;

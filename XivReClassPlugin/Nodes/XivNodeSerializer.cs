@@ -9,13 +9,17 @@ namespace XivReClassPlugin.Nodes;
 
 public class XivNodeSerializer : ICustomNodeSerializer {
 	private const string Utf8StringType = "FFXIV::Utf8String";
+	private const string StdDequeType = "FFXIV::StdDeque";
+	private const string StdListType = "FFXIV::StdList";
 	private const string StdVectorType = "FFXIV::StdVector";
 	private const string AtkValueType = "FFXIV::AtkValue";
 
 	public bool CanHandleNode(BaseNode node) {
 		return node switch {
 			Utf8StringNode => true,
-			VectorNode => true,
+			StdDequeNode => true,
+			StdListNode => true,
+			StdVectorNode => true,
 			AtkValueNode => true,
 			_ => false
 		};
@@ -24,6 +28,8 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public bool CanHandleElement(XElement element) {
 		return element.Attribute(ReClassNetFile.XmlTypeAttribute)?.Value switch {
 			Utf8StringType => true,
+			StdDequeType => true,
+			StdListType => true,
 			StdVectorType => true,
 			AtkValueType => true,
 			_ => false
@@ -33,7 +39,9 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public BaseNode CreateNodeFromElement(XElement element, BaseNode parent, IEnumerable<ClassNode> classes, ILogger logger, CreateNodeFromElementHandler defaultHandler) {
 		return element.Attribute(ReClassNetFile.XmlTypeAttribute)?.Value switch {
 			Utf8StringType => new Utf8StringNode(),
-			StdVectorType => new VectorNode(),
+			StdDequeType => new StdDequeNode(),
+			StdListType => new StdListNode(),
+			StdVectorType => new StdVectorNode(),
 			AtkValueType => new AtkValueNode(),
 			_ => throw new InvalidOperationException("Invalid XML Element Type")
 		};
@@ -42,7 +50,9 @@ public class XivNodeSerializer : ICustomNodeSerializer {
 	public XElement CreateElementFromNode(BaseNode node, ILogger logger, CreateElementFromNodeHandler defaultHandler) {
 		return node switch {
 			Utf8StringNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, Utf8StringType)),
-			VectorNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdVectorType)),
+			StdDequeNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdDequeType)),
+			StdListNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdListType)),
+			StdVectorNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, StdVectorType)),
 			AtkValueNode => new XElement(ReClassNetFile.XmlNodeElement, new XAttribute(ReClassNetFile.XmlTypeAttribute, AtkValueType)),
 			_ => throw new InvalidOperationException("Invalid Node Type")
 		};
