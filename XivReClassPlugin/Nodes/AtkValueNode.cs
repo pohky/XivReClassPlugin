@@ -15,15 +15,19 @@ public class AtkValueNode : BaseWrapperNode {
 	protected override bool PerformCycleCheck => false;
 
 	private readonly Dictionary<AtkValueType, BaseNode> m_NodeMap = new() {
-		{ AtkValueType.None, new Hex64Node { Name = "UnknownValue", Offset = 0x08 } },
+		{ AtkValueType.Undefined, new Hex64Node { Name = "UnknownValue", Offset = 0x08 } },
+		{ AtkValueType.Null, new Hex64Node { Name = "NullValue", Offset = 0x08 } },
 		{ AtkValueType.Bool, new BoolNode { Name = "BoolValue", Offset = 0x08 } },
 		{ AtkValueType.Int, new Int32Node { Name = "IntValue", Offset = 0x08 } },
+		{ AtkValueType.Int64, new Int64Node { Name = "Int64Value", Offset = 0x08 } },
 		{ AtkValueType.UInt, new UInt32Node { Name = "UIntValue", Offset = 0x08 } },
+		{ AtkValueType.UInt64, new UInt64Node { Name = "UInt64Value", Offset = 0x08 } },
 		{ AtkValueType.Float, new FloatNode { Name = "FloatValue", Offset = 0x08 } },
 		{ AtkValueType.String, new Utf8TextPtrNode { Name = "StringValue", Offset = 0x08 } },
+		{ AtkValueType.WideString, new Utf8TextPtrNode { Name = "WideStringValue", Offset = 0x08 } },
 		{ AtkValueType.String8, new Utf8TextPtrNode { Name = "String8Value", Offset = 0x08 } },
-		{ AtkValueType.AllocatedString, new Utf8TextPtrNode { Name = "AllocatedStringValue", Offset = 0x08 } },
-		{ AtkValueType.Texture, new Hex64Node { Name = "TextureValue", Offset = 0x08 } }
+		{ AtkValueType.ManagedString, new Utf8TextPtrNode { Name = "ManagedStringValue", Offset = 0x08 } },
+		{ AtkValueType.Pointer, new Hex64Node { Name = "PointerValue", Offset = 0x08 } }
 	};
 
 	public AtkValueNode() {
@@ -31,7 +35,7 @@ public class AtkValueNode : BaseWrapperNode {
 		var pointerNode = new PointerNode { Offset = 8 };
 		pointerNode.ChangeInnerNode(vectorNode);
 		m_NodeMap.Add(AtkValueType.Vector, pointerNode);
-		m_NodeMap.Add(AtkValueType.AllocatedVector, pointerNode);
+		m_NodeMap.Add(AtkValueType.ManagedVector, pointerNode);
 	}
 
 	public override bool CanChangeInnerNodeTo(BaseNode node) {
@@ -49,7 +53,7 @@ public class AtkValueNode : BaseWrapperNode {
 
 	private BaseNode GetNodeForType(AtkValueType type) {
 		if (!m_NodeMap.TryGetValue(type, out var node))
-			node = m_NodeMap[AtkValueType.None];
+			node = m_NodeMap[AtkValueType.Undefined];
 		node.Offset = Offset + 8;
 		return node;
 	}
@@ -60,14 +64,18 @@ public class AtkValueNode : BaseWrapperNode {
 
 	private string ReadValueString(DrawContext context, AtkValueType type) {
 		return type switch {
-			AtkValueType.None => string.Empty,
-			AtkValueType.Int => $"{context.Memory.ReadInt32(Offset + 8)}",
+			AtkValueType.Undefined => string.Empty,
+			AtkValueType.Null => string.Empty,
 			AtkValueType.Bool => $"{context.Memory.ReadInt8(Offset + 8) != 0}",
+			AtkValueType.Int => $"{context.Memory.ReadInt32(Offset + 8)}",
+			AtkValueType.Int64 => $"{context.Memory.ReadInt64(Offset + 8)}",
 			AtkValueType.UInt => $"{context.Memory.ReadUInt32(Offset + 8)}",
+			AtkValueType.UInt64 => $"{context.Memory.ReadUInt64(Offset + 8)}",
 			AtkValueType.Float => $"{context.Memory.ReadFloat(Offset + 8)}",
 			AtkValueType.String => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
+			AtkValueType.WideString => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.Unicode, 256)}'",
 			AtkValueType.String8 => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
-			AtkValueType.AllocatedString => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
+			AtkValueType.ManagedString => $"'{context.Process.ReadRemoteString(context.Memory.ReadIntPtr(Offset + 8), Encoding.UTF8, 256)}'",
 			_ => $"0x{context.Memory.ReadIntPtr(Offset + 8).ToInt64():X8}"
 		};
 	}
@@ -123,16 +131,26 @@ public class AtkValueNode : BaseWrapperNode {
 	}
 }
 
+[Flags]
 public enum AtkValueType {
-	None = 0x00,
-	Int = 0x03,
-	Bool = 0x02,
-	UInt = 0x04,
-	Float = 0x05,
-	String = 0x06,
-	String8 = 0x08,
-	Vector = 0x09,
-	Texture = 0x0A,
-	AllocatedString = 0x26,
-	AllocatedVector = 0x29
+	Undefined = 0,
+	Null = 0x1,
+	Bool = 0x2,
+	Int = 0x3,
+	Int64 = 0x4,
+	UInt = 0x5,
+	UInt64 = 0x6,
+	Float = 0x7,
+	String = 0x8, // 1 byte per character (ASCII/UTF-8)
+	WideString = 0x9, // 2 bytes per character (UTF-16)
+	String8 = 0xA, // assumed to be a const char*
+	Vector = 0xB,
+	Pointer = 0xC,
+	AtkValues = 0xD,
+
+	TypeMask = 0xF,
+
+	Managed = 0x20,
+	ManagedString = Managed | String,
+	ManagedVector = Managed | Vector,
 }
