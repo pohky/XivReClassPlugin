@@ -29,7 +29,7 @@ public class Utf8StringNode : BaseTextPtrNode {
 
         var ptr = context.Memory.ReadIntPtr(Offset);
         var rawlen = (int)context.Memory.ReadInt64(Offset + 0x10);
-        var strlen = Math.Min(rawlen, 1024);
+        var strlen = Math.Max(Math.Min(rawlen, 1024), 0);
 
         string text;
         if (Ffxiv.Settings.DecodeUtf8Strings) {
