@@ -5,6 +5,7 @@ using ReClassNET.Nodes;
 using ReClassNET.UI;
 using System;
 using System.Drawing;
+using System.Linq;
 using XivReClassPlugin.Resources;
 
 namespace XivReClassPlugin.Nodes;
@@ -62,6 +63,15 @@ public class StdSetNode : BaseWrapperArrayNode {
 		//return Draw(context, x, y, "Vector");
 	}
 
+	private int CalculateAlignment(BaseNode node) {
+		return node switch {
+			PointerNode => IntPtr.Size,
+			BaseWrapperNode baseWrapperNode when baseWrapperNode.InnerNode != node => CalculateAlignment(baseWrapperNode.InnerNode),
+			ClassNode classNode => classNode.Nodes.Select(CalculateAlignment).Max(),
+			_ => node.MemorySize
+		};
+	}
+
 	protected override Size DrawChild(DrawContext context, int x, int y)
 	{
 		var innerContext = context.Clone();
@@ -70,8 +80,7 @@ public class StdSetNode : BaseWrapperArrayNode {
 		var current = head;
 
 		int valueOffset = IntPtr.Size * 3 + 2; // Left, Parent, Right, Color, IsNil
-		int valueSize = InnerNode.MemorySize;
-		int alignment = valueSize > 8 ? 8 : valueSize;
+		int alignment = CalculateAlignment(InnerNode);
 		int remainder = valueOffset % alignment;
 		if (remainder != 0)
 			valueOffset += alignment - remainder;
@@ -111,7 +120,7 @@ public class StdSetNode : BaseWrapperArrayNode {
 		innerContext.Address = current + valueOffset;
 		innerContext.Memory = new MemoryBuffer
 		{
-			Size = valueSize,
+			Size = InnerNode.MemorySize,
 			Offset = 0
 		};
 		innerContext.Memory.UpdateFrom(context.Process, innerContext.Address);
