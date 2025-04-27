@@ -32,11 +32,10 @@ public class Utf8StringNode : BaseTextPtrNode {
         var strlen = Math.Max(Math.Min(rawlen, 1024), 0);
 
         string text;
-        if (Ffxiv.Settings.DecodeUtf8Strings) {
+        if (Ffxiv.Settings.DecodeUtf8Strings)
             text = ReadUtf8String(context, ptr, strlen);
-        } else {
+        else
             text = context.Process.ReadRemoteString(ptr, Encoding, strlen) ?? string.Empty;
-        }
 
         var origX = x;
 
@@ -75,9 +74,11 @@ public class Utf8StringNode : BaseTextPtrNode {
                     sb.Length = i;
                     break;
                 }
+
                 if (!sb[i].IsPrintable())
                     sb[i] = '.';
             }
+
             return sb.ToString();
         } catch (Exception) {
             return context.Process.ReadRemoteString(address, Encoding.UTF8, length);

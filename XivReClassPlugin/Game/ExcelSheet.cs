@@ -1,4 +1,4 @@
-﻿namespace XivReClassPlugin.Game; 
+﻿namespace XivReClassPlugin.Game;
 
 public readonly ref struct ExcelSheet {
     public readonly nint Address;
@@ -8,10 +8,10 @@ public readonly ref struct ExcelSheet {
     private readonly int m_RowCntOffset = 0x20;
 
     public string Name => Ffxiv.Memory.ReadString(Ffxiv.Memory.Read<nint>(Address + m_NameOffset));
-	public int RowCount => Ffxiv.Memory.Read<int>(Address + m_RowCntOffset);
-    
-	public ExcelSheet(nint address) {
-		Address = address;
+    public int RowCount => Ffxiv.Memory.Read<int>(Address + m_RowCntOffset);
+
+    public ExcelSheet(nint address) {
+        Address = address;
         var vtable = Ffxiv.Memory.Read<nint>(address);
         if (vtable == Ffxiv.Address.ExcelSheetVtable) {
             IsLinkedList = false;

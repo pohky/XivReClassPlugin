@@ -20,7 +20,8 @@ public partial class AddonListForm : IconForm {
         try {
             var dbProp = ListViewAddons.GetType().GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
             dbProp?.SetValue(ListViewAddons, true, null);
-        } catch{/* ignore */}
+        } catch { /* ignore */
+        }
     }
 
     private bool AddonFilter(Addon addon, string text) {
@@ -33,10 +34,9 @@ public partial class AddonListForm : IconForm {
             return true;
         if (addon.ClassName.ToUpperInvariant().Contains(text))
             return true;
-        if (text.Length <= 3 && int.TryParse(text, out var id) && id != 0) {
+        if (text.Length <= 3 && int.TryParse(text, out var id) && id != 0)
             if (addon.Id == id || addon.ParentId == id)
                 return true;
-        }
 
         return false;
     }
@@ -61,10 +61,10 @@ public partial class AddonListForm : IconForm {
 
     private void RefreshList() {
         m_DisplayList.Clear();
-        
+
         var searchText = TextBoxSearch.Text.ToUpperInvariant();
         m_DisplayList.AddRange(m_AddonList.Where(e => AddonFilter(e.Addon, searchText)));
-        
+
         ListViewAddons.VirtualListSize = m_DisplayList.Count;
         ListViewAddons.Refresh();
     }
@@ -78,7 +78,7 @@ public partial class AddonListForm : IconForm {
             UpdateList();
         }
     }
-    
+
     private void ButtonUpdateList_Click(object sender, EventArgs e) {
         ButtonUpdateList.Enabled = false;
         ListUpdateTimer.Stop();
@@ -99,6 +99,7 @@ public partial class AddonListForm : IconForm {
             var entry = m_DisplayList[idx];
             node = entry.Addon.CreateClassNode();
         }
+
         if (node != null)
             Program.MainForm.CurrentClassNode = node;
     }

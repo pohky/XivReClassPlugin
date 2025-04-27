@@ -47,7 +47,7 @@ public class XivClassNodeReader : INodeInfoReader {
                 return $"+{offset.ToString("X")}";
 
             var classSize = 0;
-            if (Ffxiv.Memory.MightBeClass(nodeAddress)) 
+            if (Ffxiv.Memory.MightBeClass(nodeAddress))
                 classSize = TryGetSizeForClass(nodeValue);
 
             return $"+{offset.ToString("X")}" + (classSize > 0 ? $" (Size: 0x{classSize:X})" : string.Empty);

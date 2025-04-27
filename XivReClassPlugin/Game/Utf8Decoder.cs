@@ -28,9 +28,7 @@ public static class Utf8Decoder {
         if (!reader.BaseStream.CanRead || reader.BaseStream.Length == 0)
             return string.Empty;
         var text = new StringBuilder();
-        while (reader.BaseStream.Position < reader.BaseStream.Length) {
-            text.Append(DecodeMacro(reader));
-        }
+        while (reader.BaseStream.Position < reader.BaseStream.Length) text.Append(DecodeMacro(reader));
         return text.ToString();
     }
 
@@ -47,8 +45,10 @@ public static class Utf8Decoder {
                     reader.BaseStream.Position--;
                     break;
                 }
+
                 stream.WriteByte(value);
             }
+
             text.Append(Encoding.UTF8.GetString(stream.ToArray()));
         } else {
             var type = reader.ReadByte();
@@ -56,7 +56,7 @@ public static class Utf8Decoder {
             var data = reader.ReadBytes(length);
             if (data.Length != length)
                 throw new ArgumentException("Unexpected end of Input (EOF).");
-            
+
             var end = reader.ReadByte();
             if (end != 0x03)
                 throw new ArgumentException($"Missing Macro End Marker (0x03). Found 0x{end:X2} instead.");
@@ -78,6 +78,7 @@ public static class Utf8Decoder {
 
             text.Append('>');
         }
+
         return text.ToString();
     }
 
@@ -85,16 +86,14 @@ public static class Utf8Decoder {
         var type = reader.ReadByte();
         if (type == 0x00)
             throw new ArgumentException("Unexpected end of input (null character).");
-        
+
         if (type is < 0xD0 or >= 0xF0 and <= 0xFE)
             return DecodeNumber(reader, type).ToString();
 
         if (type is >= 0xE0 and <= 0xE5)
             return DecodeConditional(reader, type);
 
-        if (type is >= 0xE8 and <= 0xEC or >= 0xD8 and <= 0xDF) {
-            return DecodePlaceholder(reader, type);
-        }
+        if (type is >= 0xE8 and <= 0xEC or >= 0xD8 and <= 0xDF) return DecodePlaceholder(reader, type);
 
         if (type == 0xFF) {
             var length = DecodeNumber(reader, reader.ReadByte());
@@ -153,10 +152,10 @@ public static class Utf8Decoder {
             case >= 0xF0 and <= 0xFE: {
                 type += 1;
                 var value = 0;
-                if ((type & 8) != 0) value |= (reader.ReadByte() << 24);
-                if ((type & 4) != 0) value |= (reader.ReadByte() << 16);
-                if ((type & 2) != 0) value |= (reader.ReadByte() << 8);
-                if ((type & 1) != 0) value |= (reader.ReadByte() << 0);
+                if ((type & 8) != 0) value |= reader.ReadByte() << 24;
+                if ((type & 4) != 0) value |= reader.ReadByte() << 16;
+                if ((type & 2) != 0) value |= reader.ReadByte() << 8;
+                if ((type & 1) != 0) value |= reader.ReadByte() << 0;
                 return value;
             }
             default:
@@ -181,6 +180,7 @@ public static class Utf8Decoder {
         Color = 0x13,
         Edgecolor = 0x14,
         Shadowcolor = 0x15,
+
         // - = 0x16,
         Key = 0x17,
         Scale = 0x18,
@@ -190,6 +190,7 @@ public static class Utf8Decoder {
         Shadow = 0x1C,
         Nbsp = 0x1D,
         Icon2 = 0x1E,
+
         // -- = 0x1F,
         Num = 0x20,
         Hex = 0x21,
