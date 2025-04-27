@@ -40,7 +40,7 @@ public static class Ffxiv {
         var th = CreateRemoteThread(h, 0, 0, address, arg, 0, out _);
 
         try {
-            WaitForSingleObject(th, -1);
+            WaitForSingleObject(th, 5000);
         } finally {
             if (th != 0)
                 CloseHandle(th);

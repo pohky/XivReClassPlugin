@@ -47,7 +47,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
         Name = Ffxiv.Symbols.TryGetClassName(vtable, out var name) ? name : string.Empty;
         Size = Ffxiv.Memory.TryGetSizeFromFunction(Ffxiv.Memory.Read<nint>(vtable + 2 * 8));
         m_ShowAddress = Ffxiv.Memory.Read<nint>(vtable + 3 * 8);
-        m_HideAddress = Ffxiv.Memory.Read<nint>(vtable + 4 * 8);
+        m_HideAddress = Ffxiv.Memory.Read<nint>(vtable + 5 * 8);
     }
 
     public ClassNode? CreateClassNode() {
