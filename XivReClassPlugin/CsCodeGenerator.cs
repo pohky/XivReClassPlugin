@@ -208,6 +208,12 @@ public class CsCodeGenerator : ICodeGenerator {
 				var listType = GetTypeDefinition(list.InnerNode);
 				return listType.typeName == null ? (null, null) : ($"StdList<{listType.typeName}>", null);
 			}
+			case StdSetNode set: {
+				if (set.InnerNode is ClassInstanceNode cin)
+					return ($"StdSet<{cin.InnerNode.Name}>", null);
+				var setType = GetTypeDefinition(set.InnerNode);
+				return setType.typeName == null ? (null, null) : ($"StdSet<{setType.typeName}>", null);
+			}
 			case StdVectorNode vector: {
 				if (vector.InnerNode is ClassInstanceNode cin)
 					return ($"StdVector<{cin.InnerNode.Name}>", null);
