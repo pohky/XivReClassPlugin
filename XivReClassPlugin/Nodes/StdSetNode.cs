@@ -66,6 +66,7 @@ public class StdSetNode : BaseWrapperArrayNode {
     private int CalculateAlignment(BaseNode node) {
         return node switch {
             PointerNode => IntPtr.Size,
+            BaseHexNode => 0,
             BaseWrapperNode baseWrapperNode when baseWrapperNode.InnerNode != node => CalculateAlignment(baseWrapperNode.InnerNode),
             ClassNode classNode => classNode.Nodes.Select(CalculateAlignment).Max(),
             _ => node.MemorySize
