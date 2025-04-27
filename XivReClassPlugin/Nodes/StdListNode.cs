@@ -63,15 +63,15 @@ public class StdListNode : BaseWrapperArrayNode {
     protected override Size DrawChild(DrawContext context, int x, int y) {
         var innerContext = context.Clone();
 
-        var _head = context.Memory.ReadIntPtr(Offset);
-        var _current = _head;
+        var head = context.Memory.ReadIntPtr(Offset);
+        var current = head;
 
         for (var j = 0; j <= CurrentIndex; j++) {
-            var next = context.Process.ReadRemoteIntPtr(_current);
-            if (_head == IntPtr.Zero || next == _head)
+            var next = context.Process.ReadRemoteIntPtr(current);
+            if (head == IntPtr.Zero || next == head)
                 break;
 
-            _current = next;
+            current = next;
         }
 
         var valueOffset = IntPtr.Size * 2; // next and previous
@@ -81,7 +81,7 @@ public class StdListNode : BaseWrapperArrayNode {
         if (remainder != 0)
             valueOffset += alignment - remainder;
 
-        innerContext.Address = _current + valueOffset;
+        innerContext.Address = current + valueOffset;
         innerContext.Memory = new MemoryBuffer {
             Size = valueSize,
             Offset = 0
