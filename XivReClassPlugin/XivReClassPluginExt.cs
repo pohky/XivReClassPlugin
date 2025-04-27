@@ -132,6 +132,7 @@ public sealed class XivReClassPluginExt : Plugin {
 				typeof(Utf8StringNode),
 				typeof(StdDequeNode),
 				typeof(StdListNode),
+				typeof(StdSetNode),
 				typeof(StdVectorNode),
 				typeof(AtkValueNode)
 			},

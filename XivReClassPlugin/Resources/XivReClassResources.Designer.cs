@@ -103,6 +103,16 @@ namespace XivReClassPlugin.Resources {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap StdSetIcon {
+            get {
+                object obj = ResourceManager.GetObject("StdSetIcon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap StdVectorIcon {
             get {
                 object obj = ResourceManager.GetObject("StdVectorIcon", resourceCulture);
