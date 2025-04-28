@@ -81,7 +81,7 @@ public class StdSetNode : BaseWrapperArrayNode {
 
         var valueOffset = IntPtr.Size * 3 + 2; // Left, Parent, Right, Color, IsNil
         var alignment = CalculateAlignment(InnerNode);
-        var remainder = valueOffset % alignment;
+        var remainder = alignment > 0 ? valueOffset % alignment : 0;
         if (remainder != 0)
             valueOffset += alignment - remainder;
 
