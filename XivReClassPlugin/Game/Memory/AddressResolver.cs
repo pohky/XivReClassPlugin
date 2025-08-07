@@ -46,19 +46,19 @@ public class AddressResolver {
 
     private nint GetEventFramework() {
         if (!Ffxiv.Symbols.TryGetInstance("Client::Game::Event::EventFramework_Instance", out var efwPointer))
-            efwPointer = ResolveSig("48 8B 2D ?? ?? ?? ?? 8B 48");
+            efwPointer = ResolveSig("48 8B 2D ?? ?? ?? ?? 8B 50");
         return efwPointer == 0 ? 0 : Ffxiv.Memory.Read<nint>(efwPointer);
     }
 
     private nint GetFramework() {
         if (!Ffxiv.Symbols.TryGetInstance("Client::System::Framework::Framework_InstancePointer2", out var fwPointer))
-            fwPointer = ResolveSig("48 8B 2D ?? ?? ?? ?? BA");
+            fwPointer = ResolveSig("48 8B 2D ?? ?? ?? ?? E9");
         return fwPointer == 0 ? 0 : Ffxiv.Memory.Read<nint>(fwPointer);
     }
 
     private nint GetAtkStage() {
         if (!Ffxiv.Symbols.TryGetInstance("Component::GUI::AtkStage_Instance", out var atkStagePointer))
-            atkStagePointer = ResolveSig("4C 8B 15 ?? ?? ?? ?? 3C");
+            atkStagePointer = ResolveSig("4C 8B 15 ?? ?? ?? ?? 75");
         return atkStagePointer == 0 ? 0 : Ffxiv.Memory.Read<nint>(atkStagePointer);
     }
 

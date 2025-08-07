@@ -33,20 +33,16 @@ public class Memory : MemoryAccess {
 
         FreeMemoryFunc = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("FreeMemory")).Key;
         if (FreeMemoryFunc == 0) {
-            // ew: E8 ?? ?? ?? ?? 48 C7 04
-            // dt: E8 ?? ?? ?? ?? 48 63 2E
-            FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 C7 04");
+            FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 4D 89 AE");
             if (FreeMemoryFunc == 0)
                 FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 63 2E");
         }
 
         FreeMemory2Func = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("FreeMemory_2")).Key;
         if (FreeMemory2Func == 0) {
-            // ew: E8 ?? ?? ?? ?? 48 8B C3 48 83 C4 ?? 5F 5D
-            // dt: E8 ?? ?? ?? ?? 48 8B 6C 24 ?? 48 8B C7 48 8B 74 24 ?? 48 83 C4
             FreeMemory2Func = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 8B C3 48 83 C4 ?? 5F 5D");
             if (FreeMemory2Func == 0)
-                FreeMemory2Func = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 8B 6C 24 ?? 48 8B C7 48 8B 74 24 ?? 48 83 C4");
+                FreeMemory2Func = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 8B C7 48 83 C4 ?? 41 5C");
         }
     }
 
