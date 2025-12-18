@@ -43,6 +43,7 @@
             this.ColumnHeaderSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderVTable = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ColumnHeaderClass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Show2AgentMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FlowPanelToolBar.SuspendLayout();
             this.ContextMenuMain.SuspendLayout();
             this.SuspendLayout();
@@ -106,9 +107,10 @@
             this.CopyAddressMenuItem,
             this.toolStripSeparator1,
             this.ShowAgentMenuItem,
+            this.Show2AgentMenuItem,
             this.HideAgentMenuItem});
             this.ContextMenuMain.Name = "ContextMenuMain";
-            this.ContextMenuMain.Size = new System.Drawing.Size(185, 120);
+            this.ContextMenuMain.Size = new System.Drawing.Size(185, 164);
             // 
             // CreateClassMenuItem
             // 
@@ -165,7 +167,7 @@
             this.ListViewAgents.GridLines = true;
             this.ListViewAgents.HideSelection = false;
             this.ListViewAgents.Location = new System.Drawing.Point(0, 29);
-            this.ListViewAgents.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ListViewAgents.Margin = new System.Windows.Forms.Padding(2);
             this.ListViewAgents.Name = "ListViewAgents";
             this.ListViewAgents.Size = new System.Drawing.Size(800, 421);
             this.ListViewAgents.TabIndex = 4;
@@ -202,6 +204,13 @@
             // 
             this.ColumnHeaderClass.Text = "Class";
             this.ColumnHeaderClass.Width = 300;
+            // 
+            // Show2AgentMenuItem
+            // 
+            this.Show2AgentMenuItem.Name = "Show2AgentMenuItem";
+            this.Show2AgentMenuItem.Size = new System.Drawing.Size(184, 22);
+            this.Show2AgentMenuItem.Text = "Show2 Agent";
+            this.Show2AgentMenuItem.Click += new System.EventHandler(this.Show2AgentMenuItem_Click);
             // 
             // AgentListForm
             // 
@@ -241,5 +250,6 @@
 		private System.Windows.Forms.ColumnHeader ColumnHeaderVTable;
 		private System.Windows.Forms.ColumnHeader ColumnHeaderClass;
 		private System.Windows.Forms.ToolStripMenuItem CopyAddressMenuItem;
-	}
+        private System.Windows.Forms.ToolStripMenuItem Show2AgentMenuItem;
+    }
 }

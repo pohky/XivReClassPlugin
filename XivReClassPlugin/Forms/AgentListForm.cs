@@ -117,6 +117,9 @@ public partial class AgentListForm : IconForm {
     private void ButtonUpdateList_Click(object sender, EventArgs e) {
         ButtonUpdateList.Enabled = false;
         ListUpdateTimer.Stop();
+        m_AgentList.Clear();
+        m_DisplayList.Clear();
+        ListViewAgents.VirtualListSize = 0;
         Ffxiv.Reload();
         UpdateList();
         ListUpdateTimer.Start();
@@ -168,6 +171,13 @@ public partial class AgentListForm : IconForm {
         var idx = ListViewAgents.SelectedIndices[0];
         if (idx >= m_DisplayList.Count || idx < 0) return;
         m_DisplayList[idx].Agent.Show();
+    }
+
+    private void Show2AgentMenuItem_Click(object sender, EventArgs e) {
+        if (ListViewAgents.SelectedIndices.Count == 0) return;
+        var idx = ListViewAgents.SelectedIndices[0];
+        if (idx >= m_DisplayList.Count || idx < 0) return;
+        m_DisplayList[idx].Agent.Show2();
     }
 
     private void HideAgentMenuItem_Click(object sender, EventArgs e) {

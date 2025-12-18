@@ -36,6 +36,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
     public string AddonName => AtkUnitManager.TryGetAddonById(AddonId, out var addon) ? addon.Name : string.Empty;
 
     private readonly nint m_ShowAddress;
+    private readonly nint m_Show2Address;
     private readonly nint m_HideAddress;
 
     public AgentInterface(int id, nint address) {
@@ -47,6 +48,7 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
         Name = Ffxiv.Symbols.TryGetClassName(vtable, out var name) ? name : string.Empty;
         Size = Ffxiv.Memory.TryGetSizeFromFunction(Ffxiv.Memory.Read<nint>(vtable + 2 * 8));
         m_ShowAddress = Ffxiv.Memory.Read<nint>(vtable + 3 * 8);
+        m_Show2Address = Ffxiv.Memory.Read<nint>(vtable + 4 * 8);
         m_HideAddress = Ffxiv.Memory.Read<nint>(vtable + 5 * 8);
     }
 
@@ -84,6 +86,11 @@ public class AgentInterface : IEquatable<AgentInterface>, IComparable<AgentInter
     public void Show() {
         if (m_ShowAddress == 0) return;
         Ffxiv.CreateRemoteThread(m_ShowAddress, (nint)Address);
+    }
+
+    public void Show2() {
+        if (m_Show2Address == 0) return;
+        Ffxiv.CreateRemoteThread(m_Show2Address, (nint)Address);
     }
 
     public void Hide() {
