@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Iced.Intel;
 using ReClassNET.Memory;
 
@@ -7,6 +7,8 @@ namespace XivReClassPlugin.Game.Memory;
 
 public class Memory : MemoryAccess {
     private static readonly Module EmptyModule = new() { Name = string.Empty, Path = string.Empty };
+    private readonly Dictionary<nint, int> m_SizeCache = [];
+    
     public Module MainModule { get; private set; } = EmptyModule;
 
     public nint FreeMemoryFunc { get; private set; }
@@ -27,18 +29,19 @@ public class Memory : MemoryAccess {
     }
 
     public void Reload() {
+        m_SizeCache.Clear();
         if (Process.EnumerateRemoteSectionsAndModules(out _, out var modules))
             MainModule = modules.Find(m => m.Name.Equals(Process.UnderlayingProcess.Name));
         else MainModule = EmptyModule;
 
-        FreeMemoryFunc = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("FreeMemory")).Key;
+        FreeMemoryFunc = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.Equals("FreeMemory")).Key;
         if (FreeMemoryFunc == 0) {
             FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 4D 89 AE");
             if (FreeMemoryFunc == 0)
                 FreeMemoryFunc = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 63 2E");
         }
 
-        FreeMemory2Func = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.EndsWith("FreeMemory_2")).Key;
+        FreeMemory2Func = Ffxiv.Symbols.NamedAddresses.FirstOrDefault(kv => kv.Value.Equals("FreeMemory_2")).Key;
         if (FreeMemory2Func == 0) {
             FreeMemory2Func = Ffxiv.Address.ResolveSig("E8 ?? ?? ?? ?? 48 8B C3 48 83 C4 ?? 5F 5D");
             if (FreeMemory2Func == 0)
@@ -65,6 +68,9 @@ public class Memory : MemoryAccess {
     public int TryGetSizeFromFunction(nint function) {
         if (function <= 0x10_000) return 0;
         if (FreeMemoryFunc == 0 && FreeMemory2Func == 0) return 0;
+
+        if (m_SizeCache.TryGetValue(function, out var cachedSize))
+            return cachedSize;
 
         var data = Read<byte>(function, 512);
 
@@ -94,6 +100,9 @@ public class Memory : MemoryAccess {
                 else mightBeValid = false;
             }
         }
+        
+        if (mightBeValid && size > 0)
+            m_SizeCache.Add(function, (int)size);
 
         return mightBeValid ? (int)size : 0;
     }
