@@ -26,6 +26,7 @@ public static class DataManager {
         else
             try {
                 Data = new DeserializerBuilder()
+                    .IgnoreUnmatchedProperties()
                     .WithNodeDeserializer(new AddressDeserializer())
                     .Build()
                     .Deserialize<ClientStructsData>(File.ReadAllText(path, Encoding.UTF8));

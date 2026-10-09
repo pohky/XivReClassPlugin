@@ -22,6 +22,7 @@ public class XivClass {
 public class XivVTable {
     [YamlMember(Alias = "ea")] public ulong Address { get; set; }
     [YamlMember(Alias = "base")] public string Base { get; set; } = string.Empty;
+    [YamlMember(Alias = "size")] public int Size { get; set; }
 }
 
 public sealed class XivInstance {
